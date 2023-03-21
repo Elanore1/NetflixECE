@@ -2,6 +2,7 @@ package controleur;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class RechercheInfo {
 
@@ -24,7 +25,7 @@ public class RechercheInfo {
     public void afficherLignes(String nomTable) {
         try {
             ArrayList<String> liste;
-            System.out.println("Afficher LIgnes");
+            System.out.println("Afficher Lignes");
             // recupérér les résultats de la table selectionnee
             liste = maconnexion.remplirChampsTable(nomTable);
 
@@ -48,6 +49,13 @@ public class RechercheInfo {
         }
     }
 
+    public String verifMDP(String _email) throws SQLException {
+        ArrayList<String> liste = null;
+        String reqMDP ="SELECT mdp FROM compte WHERE email LIKE '"+_email+"';";
+        maconnexion.ajouterRequete(reqMDP);
+        liste = maconnexion.remplirChampsRequete(reqMDP);
+        return liste.get(0);
+    }
     public ArrayList<String> afficherRes(String requeteSelectionnee) throws SQLException {
         ArrayList<String> liste = null;
         try {
@@ -94,7 +102,16 @@ public class RechercheInfo {
                 // recuperer les lignes de la table selectionnee
                 afficherLignes(nomTable);
 
-                // afficher les résultats de la requete selectionnee
+                Scanner sc =new Scanner(System.in);
+                System.out.println("Saisir email");
+                String email = sc.nextLine();
+                String mdpVerif =verifMDP(email);
+                System.out.println("bon mdp :"+mdpVerif);
+                System.out.println("Saisir mdp");
+                String mdp = sc.nextLine();
+                if(mdp==mdpVerif)
+                    System.out.println("Mot de passe est bon");
+
             } catch (ClassNotFoundException cnfe) {
                 System.out.println("Connexion echouee : probleme de classe");
                 cnfe.printStackTrace();
