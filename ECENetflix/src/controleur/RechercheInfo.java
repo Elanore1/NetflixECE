@@ -68,6 +68,7 @@ public class RechercheInfo {
         maconnexion.ajouterTable("compte");
     }
 
+
     void lectureDAO(){
         try {
             try {
