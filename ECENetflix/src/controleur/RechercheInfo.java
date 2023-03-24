@@ -12,8 +12,25 @@ public class RechercheInfo {
 
     public RechercheInfo(){
         super();
+        try {
+            try {
+                // tentative de connexion si les 4 attributs sont remplis
+                //maconnexion = new Connexion("jps", "root", "");
+                maconnexion = new ConnexionDB("projetinfo", "root", "root");
+            } catch (ClassNotFoundException cnfe) {
+                System.out.println("Connexion echouee : probleme de classe");
+                cnfe.printStackTrace();
+            }
+        } catch (SQLException e) {
+            System.out.println("Connexion echouee : probleme SQL");
+            e.printStackTrace();
+        }
         listeDeTables = new java.awt.List(100, false);
         listeDeRequetes = new java.awt.List(100, false);
+        //on ajoute nos tables
+        remplirTables();
+        listeDeTables.select(0);
+
     }
 
     public void afficherTables() {
@@ -54,7 +71,21 @@ public class RechercheInfo {
         String reqMDP ="SELECT mdp FROM compte WHERE email LIKE '"+_email+"';";
         maconnexion.ajouterRequete(reqMDP);
         liste = maconnexion.remplirChampsRequete(reqMDP);
-        return liste.get(0);
+        if(liste.size()!=0)
+            return liste.get(0);
+        else
+            return null;
+    }
+
+    public String verifEmail(String _email) throws SQLException {
+        ArrayList<String> liste = null;
+        String reqMDP ="SELECT email FROM compte WHERE email LIKE '"+_email+"';";
+        maconnexion.ajouterRequete(reqMDP);
+        liste = maconnexion.remplirChampsRequete(reqMDP);
+        if(liste.size()!=0)
+            return liste.get(0);
+        else
+            return null;
     }
     public ArrayList<String> afficherRes(String requeteSelectionnee) throws SQLException {
         ArrayList<String> liste = null;
@@ -75,7 +106,6 @@ public class RechercheInfo {
     private void remplirTables(){
         maconnexion.ajouterTable("compte");
     }
-
 
     void lectureDAO(){
         try {
