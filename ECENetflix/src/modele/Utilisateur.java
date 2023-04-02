@@ -3,19 +3,19 @@ package modele;
 import javax.swing.*;
 import java.util.ArrayList;
 
-public class Utilisateurs {//un compte netflix repertorie plusieurs utilisateurs
+public class Utilisateur {//un compte netflix repertorie plusieurs utilisateurs
     private String pseudo;//pseudo de l'utilisateur
     private ImageIcon photoProfil;
     private ArrayList<String> maListe;
     private ArrayList<String> parametre;
 
-    public Utilisateurs(){
+    public Utilisateur(){
         this.pseudo = "";
         this.photoProfil = null;
         this.maListe = new ArrayList<String>();
         this.parametre = new ArrayList<String>();
     }
-    public Utilisateurs(String _pseudo,ImageIcon _photoProfil,ArrayList<String> _maListe,ArrayList<String> _parametre){
+    public Utilisateur(String _pseudo,ImageIcon _photoProfil,ArrayList<String> _maListe,ArrayList<String> _parametre){
         this.pseudo = _pseudo;
         this.photoProfil = _photoProfil;
         this.maListe = (ArrayList<String>)_maListe.clone();

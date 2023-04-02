@@ -34,6 +34,7 @@ public class FenetreControleur{
                     action="pause";
                     break;
                 case "Créer un compte":
+                    fenetre.CreationCompte();
                     action="pause";
                     break;
                 case "S'identifier":
@@ -41,10 +42,13 @@ public class FenetreControleur{
                     action="pause";
                     break;
                 case "Netflix":
-                    System.out.println("netflix");
                     fenetre.AppNetflix();
                     action="pause";
                     break;
+                case "Choix Utilisateurs":
+                    System.out.println("choix des utilisateurs");
+                    action="pause";
+                break;
             }
         }while(end!=true);
 

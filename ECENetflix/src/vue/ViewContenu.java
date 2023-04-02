@@ -12,6 +12,7 @@ import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.regex.Pattern;
 
 public class ViewContenu extends JPanel{
     FenetreControleur controleur;
@@ -82,7 +83,11 @@ public class ViewContenu extends JPanel{
             @Override
             public void mouseEntered(MouseEvent e){}
             @Override
-            public void mouseExited(MouseEvent e) {}
+            public void mouseExited(MouseEvent e) {
+                if(TextEmail.getText().length()==0){
+                    TextEmail.setText("E-mail");
+                }
+            }
         });
         TextMDP.addMouseListener(new MouseListener() {
             @Override
@@ -101,7 +106,11 @@ public class ViewContenu extends JPanel{
             @Override
             public void mouseEntered(MouseEvent e){}
             @Override
-            public void mouseExited(MouseEvent e) {}
+            public void mouseExited(MouseEvent e) {
+                if(TextMDP.getText().length()==0){
+                    TextMDP.setText("Mot de Passe");
+                }
+            }
         });
         bconfirm.getModel().addChangeListener(new ChangeListener() {
             //verif que le mail existe dans la base de données
@@ -185,7 +194,7 @@ public class ViewContenu extends JPanel{
                         } catch (InterruptedException ex) {
                             throw new RuntimeException(ex);
                         }
-                        controleur.setAction("Netflix");
+                        controleur.setAction("Choix Utilisateurs");
                     }
                 }
             }
@@ -314,8 +323,266 @@ public class ViewContenu extends JPanel{
     }
 
     public void Netflix(){
+        //lorsqu'on a choisit l'utilisateur
+    }
+    public void ChoixUtilisateurs(){
 
     }
+
+    public void CreaCompte(){
+        //on met image en fond
+        try {
+            setImage("src/images/FondAcceuil.png");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }//container qui a une nouvelle couleur
+        JPanel container = new JPanel();
+        container.setPreferredSize(new Dimension(450,500));
+        container.setBackground(new Color(0,0,0,150));
+        container.setLayout(new GridBagLayout());
+
+        JLabel ident = new JLabel("Créer un Nouveau Compte");
+        JLabel mail = new JLabel("Saisir une adresse mail");
+        JLabel mdp = new JLabel("Saisir un mot de passe");
+        ident.setFont(new Font("Arial", Font.BOLD,20));
+        JLabel BadEmail = new JLabel(" ");
+        JLabel BadMDP = new JLabel(" ");
+        JButton bconfirm = new JButton("Valider");
+        final JTextField TextEmail = new JTextField("XXXXX@mail.com");
+        JPasswordField TextMDP = new JPasswordField("X3skdj3qsZ@6NS&def1");
+        TextMDP.setEchoChar((char)0);
+        TextEmail.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                //On efface le texte original
+                if(TextEmail.isEditable()){
+                    JTextField TextEmail =(JTextField) e.getSource();
+                    TextEmail.setText("");
+                    TextEmail.setForeground(Color.white);
+                }
+            }
+            @Override
+            public void mousePressed(MouseEvent e){}
+            @Override
+            public void mouseReleased(MouseEvent e){}
+            @Override
+            public void mouseEntered(MouseEvent e){}
+            @Override
+            public void mouseExited(MouseEvent e) {
+                if(TextEmail.getText().length()==0){
+                    TextEmail.setText("XXXXX@mail.com");
+                }
+            }
+        });
+        TextMDP.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                //On efface le texte original
+                if(TextMDP.isEditable()){
+                    JTextField TextMDP =(JTextField) e.getSource();
+                    TextMDP.setText("");
+                    TextMDP.setForeground(Color.white);
+                }
+            }
+            @Override
+            public void mousePressed(MouseEvent e){}
+            @Override
+            public void mouseReleased(MouseEvent e){}
+            @Override
+            public void mouseEntered(MouseEvent e){}
+            @Override
+            public void mouseExited(MouseEvent e) {
+                if(TextMDP.getText().length()==0){
+                    TextMDP.setText("X3skdj3qsZ@6NS&def1");
+                }
+            }
+        });
+        bconfirm.getModel().addChangeListener(new ChangeListener() {
+            //verif que le mail est valable
+            private boolean validateMail(String mail){
+                //Regular Expression pour un mail
+                //on verif que le mail est valide
+                String regx = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
+                Pattern pattern = Pattern.compile(regx);
+                if (pattern.matcher(mail).matches()) {
+                    System.out.println("email "+mail);
+                    return true;//c'est bon
+                }else{
+                    return false;//pas bon
+                }
+            }
+            private String validateMDP(String _mdp){
+                //Verif mdp contient une minuscule, maj, cara special et chiffre
+                int digit=0;
+                int special=0;
+                int upCount=0;
+                int loCount=0;
+                for(int i =0;i<_mdp.length();i++){
+                    char c = _mdp.charAt(i);
+                    if(Character.isUpperCase(c)){
+                        upCount++;
+                    }
+                    if(Character.isLowerCase(c)){
+                        loCount++;
+                    }
+                    if(Character.isDigit(c)){
+                        digit++;
+                    }
+                    if(c>=33&&c<=46||c==64){
+                        special++;
+                    }
+                }
+                //il faut un caractere minuscule, un max, un special et un chiffre pour validation
+                if(special>=1&&loCount>=1&&upCount>=1&&digit>=1){
+                    System.out.println("mdp"+_mdp);
+                    return "true";
+                }else{
+                    if(loCount<1)
+                        return "minuscule";
+                    else if(upCount<1)
+                        return "majuscule";
+                    else if(digit<1)
+                        return "numérique";
+                    else
+                        return "special";
+                }
+            }
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                ButtonModel model = bconfirm.getModel();
+                //on appuie sur le bouton
+                if (model.isArmed()) {
+                    boolean mdpSaisie=false;
+                    //Validation de l'email
+                    if(validateMail(TextEmail.getText())){
+                        //le mail est valide
+                        BadEmail.setForeground(Color.green);
+                        BadEmail.setText("L'email saisi est valide");
+                        TextEmail.setEditable(false);
+                        System.out.println(TextMDP.getText());
+                        mdpSaisie=true;
+                    }else if(!(TextEmail.getText().length()>0)){//si il n'y a rien dedans
+                        TextEmail.setText("E-mail");
+                        BadEmail.setText("Saisir un e-mail");//on affiche rien
+                        BadMDP.setText(" ");
+                    }else{
+                        BadEmail.setForeground(Color.red);
+                        BadEmail.setText("Saisir un email valide");
+                        BadMDP.setText(" ");
+                    }
+                    //si un bon email a été entré
+                    if(mdpSaisie==true){
+                        String verif = validateMDP(TextMDP.getText());
+                        //Validation mdp
+                        if(verif=="true"){
+                            //le mail est valide
+                            BadMDP.setForeground(Color.green);
+                            BadMDP.setText("Le mot de passe est valide");
+                            TextMDP.setEditable(false);
+                            bconfirm.getModel().setPressed(false);
+                            var=true;
+                        }else if(!(TextMDP.getText().length()>0)){//si il n'y a rien dedans
+                            TextMDP.setText("Mot de passe");
+                            BadMDP.setForeground(Color.red);
+                            BadMDP.setText("Veuillez saisir un mot de passe");//on affiche rien
+
+                        }else{
+                            BadMDP.setForeground(Color.red);
+                            BadMDP.setText("Saississez au moins un caractere "+ verif);
+                        }
+                    }
+                    //pour actualiser notre panel
+                    updateUI();
+                } else {//relachement
+                    if(var==true){
+                        //pour laisser un temps avant de s connecter
+                        try {
+                            //on attend et on quitte
+                            Thread.sleep(2000);
+                        } catch (InterruptedException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        controleur.setAction("Choix Utilisateurs");
+                    }
+                }
+            }
+        });
+        //Couleur des textes
+        ident.setForeground(Color.white);
+        mail.setForeground(Color.white);
+        mdp.setForeground(Color.white);
+        BadEmail.setForeground(Color.red);
+        BadEmail.setFont(new Font("SansSerif", Font.BOLD, 11));
+        BadMDP.setForeground(Color.red);
+        BadMDP.setFont(new Font("SansSerif", Font.BOLD, 11));
+        //Bouton
+        bconfirm.setBackground(new Color(1,113,121));
+        bconfirm.setForeground(Color.white);
+        bconfirm.setPreferredSize(new Dimension(250,35));
+        bconfirm.setFocusPainted(false);
+        //taille textfield
+        TextEmail.setPreferredSize(new Dimension(250,35));
+        TextMDP.setPreferredSize(new Dimension(250,35));
+        //couleur textField
+        TextEmail.setForeground(Color.white);
+        TextMDP.setForeground(Color.white);
+        TextEmail.setBackground(Color.DARK_GRAY);
+        TextMDP.setBackground(Color.DARK_GRAY);
+        //Inset
+        Insets textInsets = new Insets(10, 10, 5, 10);
+        Insets buttonInsets = new Insets(20, 10, 10, 10);
+        Insets errorInsets = new Insets(0,20,0,0);
+        //positionnement S'identifier
+        GridBagConstraints input = new GridBagConstraints();
+        input.anchor = GridBagConstraints.CENTER;
+        input.insets = textInsets;
+        input.gridy = 0;
+        container.add(ident,input);
+        //positionnement Saisir email
+        input.anchor = GridBagConstraints.WEST;
+        input.insets = textInsets;
+        input.gridy = 1;
+        container.add(mail,input);
+        //positionnement textEmail
+        input.anchor = GridBagConstraints.CENTER;
+        input.insets = textInsets;
+        input.gridy = 2;
+        container.add(TextEmail,input);
+        //positionnement text mauvais email
+        input.gridy = 3;
+        input.insets = errorInsets;
+        input.anchor = GridBagConstraints.WEST;
+        container.add(BadEmail,input);
+        //positionnement Saisir email
+        input.anchor = GridBagConstraints.WEST;
+        input.insets = textInsets;
+        input.gridy = 4;
+        container.add(mdp,input);
+        //positionnement textMDP
+        input.gridy = 5;
+        input.insets = textInsets;
+        input.anchor = GridBagConstraints.CENTER;
+        container.add(TextMDP,input);
+        //positionnement text mauvais mdp
+        input.gridy = 6;
+        input.insets = errorInsets;
+        input.anchor = GridBagConstraints.WEST;
+        container.add(BadMDP,input);
+        //placement bouton
+        input.insets = buttonInsets;
+        input.anchor = GridBagConstraints.WEST;
+        input.gridx = 0;
+        input.gridy = 7;
+        container.add(bconfirm,input);
+        //pour placer le panel transparent (container) sur notre panel avec image en fond
+        input.anchor = GridBagConstraints.CENTER;
+        input.gridx = 2;
+        input.gridy = 5;
+        add(container,input);
+        updateUI();
+    }
+
+
     public void setController(FenetreControleur fn){
         this.controleur=fn;
     }

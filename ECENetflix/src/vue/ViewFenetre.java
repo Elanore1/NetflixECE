@@ -44,6 +44,13 @@ public class ViewFenetre extends JFrame{
         setPanel(panel);
         setVisible(true);
     }
+    public void CreationCompte(){
+        //Affichage formulaire de creation de compte
+        panel.removeAll();
+        panel.CreaCompte();
+        setPanel(panel);
+        setVisible(true);
+    }
     public void AppNetflix(){
         BarreConnection();
         panel.removeAll();
