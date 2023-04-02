@@ -1,32 +1,29 @@
 package vue;
 
+import controleur.FenetreControleur;
 import controleur.RechercheInfo;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.concurrent.TimeUnit;
 
-public class ViewContenu extends JPanel {
+public class ViewContenu extends JPanel{
+    FenetreControleur controleur;
     Image img=null;
     //pour acceder au mot de passe et email de la Base
     RechercheInfo DAO = new RechercheInfo();
     public boolean var = false;
+
     public ViewContenu() { // constructeur par surchargé
         setVisible(true);
         setBackground(new Color(255,255,255));
         setLayout(new GridBagLayout());
-
     }
     //pour mettre une image en fond
     public void setImage(String s)throws IOException{
@@ -179,15 +176,16 @@ public class ViewContenu extends JPanel {
                     }
                     //pour actualiser notre panel
                     updateUI();
-                } else {//rlachement
+                } else {//relachement
                     if(var==true){
                         //pour laisser un temps avant de s connecter
                         try {
                             //on attend et on quitte
-                            Thread.sleep(4000);
+                            Thread.sleep(2000);
                         } catch (InterruptedException ex) {
                             throw new RuntimeException(ex);
                         }
+                        controleur.setAction("Netflix");
                     }
                 }
             }
@@ -252,10 +250,74 @@ public class ViewContenu extends JPanel {
         input.gridx = 2;
         input.gridy = 5;
         add(container,input);
+        updateUI();
     }
-
 
     public void Acceuil(){
+        //on met image en fond
+        try {
+            setImage("src/images/FondAcceuil.png");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }//container qui a image en fond
+        JPanel container = new JPanel();
+        container.setPreferredSize(new Dimension(450,500));
+        container.setBackground(new Color(0,0,0,150));
+        container.setLayout(new GridBagLayout());
+        JButton bIdent = new JButton("S'identifier");
+        JButton bNvCompte = new JButton("Créer un Compte");
+        //Bouton Identification
+        bIdent.setBackground(new Color(1,113,121));
+        bIdent.setForeground(Color.white);
+        bIdent.setPreferredSize(new Dimension(250,35));
+        bIdent.setFocusPainted(false);
+        bIdent.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                //On choisit de s'identifier
+                controleur.setAction("S'identifier");
+                System.out.println("S'identifier");
+            }
+        } );
+        //Bouton Nouveau compte
+        bNvCompte.setBackground(new Color(1,113,121));
+        bNvCompte.setForeground(Color.white);
+        bNvCompte.setPreferredSize(new Dimension(250,35));
+        bNvCompte.setFocusPainted(false);
+        bNvCompte.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                controleur.setAction("Créer un compte");
+                System.out.println("Créer un compte");
+            }
+        } );
+        //Inset
+        Insets buttonInsets = new Insets(20, 10, 10, 10);
+        GridBagConstraints input = new GridBagConstraints();
+        //placement bouton ident
+        input.insets = buttonInsets;
+        input.anchor = GridBagConstraints.WEST;
+        input.gridx = 0;
+        input.gridy = 2;
+        container.add(bIdent,input);
+        //placement bouton nv compte
+        input.insets = buttonInsets;
+        input.anchor = GridBagConstraints.WEST;
+        input.gridx = 0;
+        input.gridy = 4;
+        container.add(bNvCompte,input);
+        //pour placer le panel transparent (container) sur notre panel avec image en fond
+        input.anchor = GridBagConstraints.CENTER;
+        input.gridx = 2;
+        input.gridy = 5;
+        add(container,input);
+        updateUI();
+        revalidate();
+    }
+
+    public void Netflix(){
 
     }
+    public void setController(FenetreControleur fn){
+        this.controleur=fn;
+    }
+
 }

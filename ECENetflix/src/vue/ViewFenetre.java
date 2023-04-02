@@ -1,19 +1,25 @@
 package vue;
+import controleur.FenetreControleur;
 import modele.Fenetre;
 
 import javax.swing.*;
 import java.awt.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.Observable;
+import java.util.Observer;
 
-public class ViewFenetre extends JFrame {
+public class ViewFenetre extends JFrame{
+    FenetreControleur controleur;
     //ajout d'une barre de menu
-    ViewBarreMenu barmenu = new ViewBarreMenu();
+    ViewBarreMenu barmenu;
     JMenu menu = new JMenu();
-    ViewContenu panel = new ViewContenu();
-    public Boolean connect = false;
+    ViewContenu panel;
+    Boolean connect = false;
 
     //constructeur par defaut
     public ViewFenetre(Fenetre fn) { // constructeur par surchargé
-        boolean connect = false;
+        barmenu = new ViewBarreMenu();
         setSize (fn.getLargeur(), fn.getHauteur()); // donne une taille en hauteur et largeur à la fenêtre
         setTitle (fn.getTitre()); // donne un titre à la fenêtre
         setResizable(false); //On interdit la redimensionnement de la fenêtre
@@ -33,9 +39,31 @@ public class ViewFenetre extends JFrame {
     //Formulaire pour se connecter
     public void FormConnect(){
         //Affichage formulaire de connection
+        panel.removeAll();
         panel.FormConnection();
-        setContentPane(panel);
+        setPanel(panel);
         setVisible(true);
+    }
+    public void AppNetflix(){
         BarreConnection();
+        panel.removeAll();
+        setVisible(true);
+    }
+    public void Acceuil(){
+        panel.Acceuil();
+        setPanel(panel);
+        setVisible(true);
+    }
+    //Pour recevoir les informations du controlleur
+    public void setController(FenetreControleur fn){
+        this.controleur=fn;
+    }
+    //Getter Setter panel
+    public void setPanel(ViewContenu pan){
+        this.panel=pan;
+        setContentPane(panel);
+    }
+    public ViewContenu getPanel(){
+        return panel;
     }
 }
