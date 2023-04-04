@@ -1,7 +1,6 @@
 package vue;
 
 import modele.BarreMenu;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -17,10 +16,7 @@ public class ViewBarreMenu extends JMenuBar {
     private JMenu serie = new JMenu("  Séries  ");
     private JMenu maListe = new JMenu("  Ma Liste  ");
     private JMenu nouveautés = new JMenu("  Nouveautés  ");
-
     private JMenu icone = new JMenu("          ");
-
-
     private JTextField recherche = new JTextField(" Titres, personnes, genres ",20);
     public ViewBarreMenu() { // constructeur barre de menu originale
         setBackground(Color.BLACK);//couleur de fond noir

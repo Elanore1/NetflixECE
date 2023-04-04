@@ -2,7 +2,6 @@ package vue;
 
 import controleur.FenetreControleur;
 import controleur.RechercheInfo;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -36,7 +35,6 @@ public class ViewContenu extends JPanel{
             throw new IOException(s+" introuvable", e);
         }
     }
-    //on
     @Override
     public void paintComponent(Graphics g){
         if(img!=null){
@@ -63,6 +61,7 @@ public class ViewContenu extends JPanel{
         JLabel BadEmail = new JLabel(" ");
         JLabel BadMDP = new JLabel(" ");
         JButton bconfirm = new JButton("Valider");
+        JButton bretour = new JButton("Retour");
         final JTextField TextEmail = new JTextField("E-mail");
         JPasswordField TextMDP = new JPasswordField("Mot de Passe");
         TextMDP.setEchoChar((char)0);
@@ -199,6 +198,17 @@ public class ViewContenu extends JPanel{
                 }
             }
         });
+        bretour.getModel().addChangeListener(new ChangeListener() {
+            //bouton retour
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                ButtonModel model = bretour.getModel();
+                //on appuie sur le bouton
+                if (model.isArmed()) {
+                    controleur.setAction("Acceuil");
+                }
+            }
+        });
         //Couleur des textes
         ident.setForeground(Color.white);
         BadEmail.setForeground(Color.red);
@@ -210,6 +220,10 @@ public class ViewContenu extends JPanel{
         bconfirm.setForeground(Color.white);
         bconfirm.setPreferredSize(new Dimension(250,35));
         bconfirm.setFocusPainted(false);
+        bretour.setBackground(new Color(1,113,121));
+        bretour.setForeground(Color.white);
+        bretour.setPreferredSize(new Dimension(150,35));
+        bretour.setFocusPainted(false);
         //taille textfield
         TextEmail.setPreferredSize(new Dimension(250,35));
         TextMDP.setPreferredSize(new Dimension(250,35));
@@ -254,6 +268,12 @@ public class ViewContenu extends JPanel{
         input.gridx = 0;
         input.gridy = 5;
         container.add(bconfirm,input);
+        //bouton retour
+        input.insets = buttonInsets;
+        input.anchor = GridBagConstraints.CENTER;
+        input.gridx = 0;
+        input.gridy = 8;
+        container.add(bretour,input);
         //pour placer le panel transparent (container) sur notre panel avec image en fond
         input.anchor = GridBagConstraints.CENTER;
         input.gridx = 2;
@@ -348,7 +368,8 @@ public class ViewContenu extends JPanel{
         JLabel BadEmail = new JLabel(" ");
         JLabel BadMDP = new JLabel(" ");
         JButton bconfirm = new JButton("Valider");
-        final JTextField TextEmail = new JTextField("XXXXX@mail.com");
+        JButton bretour = new JButton("Retour");
+        JTextField TextEmail = new JTextField("XXXXX@mail.com");
         JPasswordField TextMDP = new JPasswordField("X3skdj3qsZ@6NS&def1");
         TextMDP.setEchoChar((char)0);
         TextEmail.addMouseListener(new MouseListener() {
@@ -404,8 +425,10 @@ public class ViewContenu extends JPanel{
                 //on verif que le mail est valide
                 String regx = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
                 Pattern pattern = Pattern.compile(regx);
-                if (pattern.matcher(mail).matches()) {
-                    System.out.println("email "+mail);
+                System.out.println(mail);
+                if(mail.equals("XXXXX@mail.com")){
+                    return false;
+                }else if(pattern.matcher(mail).matches()){
                     return true;//c'est bon
                 }else{
                     return false;//pas bon
@@ -433,8 +456,9 @@ public class ViewContenu extends JPanel{
                     }
                 }
                 //il faut un caractere minuscule, un max, un special et un chiffre pour validation
-                if(special>=1&&loCount>=1&&upCount>=1&&digit>=1){
-                    System.out.println("mdp"+_mdp);
+                if(_mdp.equals("X3skdj3qsZ@6NS&def1")){
+                    return "false";
+                }else if(special>=1&&loCount>=1&&upCount>=1&&digit>=1){
                     return "true";
                 }else{
                     if(loCount<1)
@@ -481,8 +505,8 @@ public class ViewContenu extends JPanel{
                             TextMDP.setEditable(false);
                             bconfirm.getModel().setPressed(false);
                             var=true;
-                        }else if(!(TextMDP.getText().length()>0)){//si il n'y a rien dedans
-                            TextMDP.setText("Mot de passe");
+                        }else if(verif.equals("false")){//si il n'y a rien dedans
+                            TextMDP.setText("X3skdj3qsZ@6NS&def1");
                             BadMDP.setForeground(Color.red);
                             BadMDP.setText("Veuillez saisir un mot de passe");//on affiche rien
 
@@ -507,10 +531,21 @@ public class ViewContenu extends JPanel{
                 }
             }
         });
+        bretour.getModel().addChangeListener(new ChangeListener() {
+            //bouton retour
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                ButtonModel model = bretour.getModel();
+                //on appuie sur le bouton
+                if (model.isArmed()) {
+                    controleur.setAction("Acceuil");
+                }
+            }
+        });
         //Couleur des textes
         ident.setForeground(Color.white);
-        mail.setForeground(Color.white);
-        mdp.setForeground(Color.white);
+        mail.setForeground(new Color(1,113,121));
+        mdp.setForeground(new Color(1,113,121));
         BadEmail.setForeground(Color.red);
         BadEmail.setFont(new Font("SansSerif", Font.BOLD, 11));
         BadMDP.setForeground(Color.red);
@@ -520,6 +555,10 @@ public class ViewContenu extends JPanel{
         bconfirm.setForeground(Color.white);
         bconfirm.setPreferredSize(new Dimension(250,35));
         bconfirm.setFocusPainted(false);
+        bretour.setBackground(new Color(1,113,121));
+        bretour.setForeground(Color.white);
+        bretour.setPreferredSize(new Dimension(150,35));
+        bretour.setFocusPainted(false);
         //taille textfield
         TextEmail.setPreferredSize(new Dimension(250,35));
         TextMDP.setPreferredSize(new Dimension(250,35));
@@ -574,6 +613,12 @@ public class ViewContenu extends JPanel{
         input.gridx = 0;
         input.gridy = 7;
         container.add(bconfirm,input);
+        //bouton retour
+        input.insets = buttonInsets;
+        input.anchor = GridBagConstraints.CENTER;
+        input.gridx = 0;
+        input.gridy = 8;
+        container.add(bretour,input);
         //pour placer le panel transparent (container) sur notre panel avec image en fond
         input.anchor = GridBagConstraints.CENTER;
         input.gridx = 2;

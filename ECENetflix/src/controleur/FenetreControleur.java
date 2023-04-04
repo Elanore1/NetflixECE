@@ -74,5 +74,5 @@ public class FenetreControleur{
         }
 
     }while(end==true);
-    //nv.lectureDAO(); */
+    nv.lectureDAO(); */
 }

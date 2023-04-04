@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class RechercheInfo {
-
     private ConnexionDB maconnexion;
     private final java.awt.List listeDeTables;
     private final java.awt.List listeDeRequetes;
@@ -38,7 +37,6 @@ public class RechercheInfo {
             listeDeTables.add(table);
         }
     }
-
     public void afficherLignes(String nomTable) {
         try {
             ArrayList<String> liste;
@@ -65,7 +63,6 @@ public class RechercheInfo {
             e.printStackTrace();
         }
     }
-
     public String verifMDP(String _email) throws SQLException {
         ArrayList<String> liste = null;
         String reqMDP ="SELECT mdp FROM compte WHERE email LIKE '"+_email+"';";
@@ -76,7 +73,6 @@ public class RechercheInfo {
         else
             return null;
     }
-
     public String verifEmail(String _email) throws SQLException {
         ArrayList<String> liste = null;
         String reqMDP ="SELECT email FROM compte WHERE email LIKE '"+_email+"';";

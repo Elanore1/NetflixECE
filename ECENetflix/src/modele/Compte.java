@@ -33,30 +33,7 @@ public class Compte{
         this.usager = _usager;
     }
     public void setMdp(String _mdp){
-        //Verif mdp contient une minuscule, maj, cara special et chiffre
-        int digit=0;
-        int special=0;
-        int upCount=0;
-        int loCount=0;
-        for(int i =0;i<_mdp.length();i++){
-            char c = _mdp.charAt(i);
-            if(Character.isUpperCase(c)){
-                upCount++;
-            }
-            if(Character.isLowerCase(c)){
-                loCount++;
-            }
-            if(Character.isDigit(c)){
-                digit++;
-            }
-            if(c>=33&&c<=46||c==64){
-                special++;
-            }
-        }
-        //il faut un caractere minuscule, un max, un special et un chiffre pour validation
-        if(special>=1&&loCount>=1&&upCount>=1&&digit>=1){
-            this.mdp=_mdp;
-        }
+        this.mdp=_mdp;
     }
     public void setUtilisateurs(ArrayList<Utilisateur> _utilisateurs){
         this.utilisateurs= (ArrayList<Utilisateur>)_utilisateurs.clone();
