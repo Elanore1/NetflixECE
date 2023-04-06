@@ -3,6 +3,7 @@ import controleur.FenetreControleur;
 import modele.Fenetre;
 
 import javax.swing.*;
+import javax.swing.plaf.basic.BasicScrollBarUI;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -53,9 +54,12 @@ public class ViewFenetre extends JFrame{
         setVisible(true);
     }
     public void AppNetflix(){
+        this.setLayout(null);
         BarreConnection();
         panel.removeAll();
+        panel.Netflix();
         panel.updateUI();
+        setPanel(panel);
         setVisible(true);
     }
     public void Acceuil(){

@@ -4,13 +4,19 @@ import controleur.FenetreControleur;
 import controleur.RechercheInfo;
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.plaf.basic.BasicScrollBarUI;
+import javax.swing.plaf.synth.SynthGraphicsUtils;
+import javax.xml.stream.Location;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.ImageObserver;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.AttributedCharacterIterator;
 import java.util.regex.Pattern;
 
 public class ViewContenu extends JPanel{
@@ -343,13 +349,138 @@ public class ViewContenu extends JPanel{
     }
 
     public void Netflix(){
-        //lorsqu'on a choisit l'utilisateur
+        //Appli Netflix
+        JPanel container = new JPanel(null);
+        container.setSize(2050,2500);
+        container.setPreferredSize(container.getPreferredSize());
+        container.setBackground(Color.red);
+        JLabel top10 = new JLabel(new ImageIcon("src/images/top10.png"),JLabel.CENTER);
+        JPanel separateur =new JPanel(null);
+        JLabel titre = new JLabel("TOP 10 en France aujourd'hui");
+        titre.setFont(new Font("Arial",Font.BOLD, 25));
+        titre.setForeground(Color.white);
+        titre.setBounds(10,15,400,60);
+        separateur.setBackground(new Color(20,20,20));
+        separateur.setBounds(0,0,1200,100);
+        separateur.add(titre);
+        top10.setBounds(0,100,2018,200);
+        JButton droite = new JButton(" > ");
+        JButton gauche = new JButton(" < ");
+        droite.setBackground(new Color(0,0,0,150));
+        droite.setForeground(Color.white);
+        droite.setBounds(1121,0,50,200);
+        droite.setEnabled(false);
+        gauche.setBackground(new Color(0,0,0,150));
+        gauche.setForeground(Color.white);
+        gauche.setBounds(0,0,50,200);
+        gauche.setEnabled(false);
+        droite.setVisible(true);
+        gauche.setVisible(true);
+        droite.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e){
+                droite.setBackground(new Color(0,0,0,150));
+                System.out.println(top10.getLocation());
+                //si on est de 1 à 7
+                if(top10.getLocation().equals(new Point(0,100))){
+                    top10.setLocation(-820,100);
+                    droite.setBounds(1941,0,50,200);
+                    gauche.setBounds(820,0,50,200);
+                }else{
+                    top10.setLocation(0,100);
+                    droite.setBounds(1121,0,50,200);
+                    gauche.setBounds(0,0,50,200);
+                }
+                updateUI();
+            }
+            @Override
+            public void mousePressed(MouseEvent e){
+                droite.setBackground(new Color(0,0,0,150));
+                updateUI();
+            }
+            @Override
+            public void mouseReleased(MouseEvent e){
+                droite.setBackground(new Color(0,0,0,150));
+                updateUI();
+            }
+            @Override
+            public void mouseEntered(MouseEvent e){
+                droite.setBackground(new Color(0,0,0,150));
+                updateUI();
+            }
+            @Override
+            public void mouseExited(MouseEvent e) {
+                droite.setBackground(new Color(0,0,0,150));
+                updateUI();
+            }
+        });
+        gauche.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e){
+                gauche.setBackground(new Color(0,0,0,150));
+                System.out.println(top10.getLocation());
+                //si on est de 1 à 7
+                if(top10.getLocation().equals(new Point(0,100))){
+                    top10.setLocation(-820,100);
+                    droite.setBounds(1941,0,50,200);
+                    gauche.setBounds(820,0,50,200);
+                }else{
+                    top10.setLocation(0,100);
+                    droite.setBounds(1121,0,50,200);
+                    gauche.setBounds(0,0,50,200);
+                }
+                updateUI();
+            }
+            @Override
+            public void mousePressed(MouseEvent e){
+                gauche.setBackground(new Color(0,0,0,150));
+                updateUI();
+            }
+            @Override
+            public void mouseReleased(MouseEvent e){
+                gauche.setBackground(new Color(0,0,0,150));
+                updateUI();
+            }
+            @Override
+            public void mouseEntered(MouseEvent e){
+                gauche.setBackground(new Color(0,0,0,150));
+                updateUI();
+            }
+            @Override
+            public void mouseExited(MouseEvent e) {
+                gauche.setBackground(new Color(0,0,0,150));
+                updateUI();
+            }
+        });
+        top10.add(droite);
+        top10.add(gauche);
+        updateUI();
+        container.add(separateur,BorderLayout.CENTER);
+        container.add(top10,BorderLayout.CENTER);
+        //on définie les barres en noir
+        JScrollPane scrollPane = new JScrollPane(container);
+        scrollPane.getVerticalScrollBar().setBackground(Color.BLACK);
+        scrollPane.getHorizontalScrollBar();
+        scrollPane.setBounds(0,0,1190,713);
+        scrollPane.getVerticalScrollBar().setUI(new BasicScrollBarUI() {
+            @Override
+            protected void configureScrollBarColors() {
+                thumbHighlightColor = new Color(0x8d8d8d);
+                thumbLightShadowColor = new Color(0x8d8d8d);
+                thumbDarkShadowColor = new Color(0x8d8d8d);
+                thumbColor = new Color(20,20,20);
+            }
+        });
+        scrollPane.setHorizontalScrollBar(null);
+        add(scrollPane, BorderLayout.CENTER);
     }
     public void ChoixUtilisateurs(){
 
     }
 
-    public void CreaCompte(){
+    public void CreaCompte()
+    {
+        ///creation d'un compte
         //on met image en fond
         try {
             setImage("src/images/FondAcceuil.png");
@@ -626,7 +757,6 @@ public class ViewContenu extends JPanel{
         add(container,input);
         updateUI();
     }
-
 
     public void setController(FenetreControleur fn){
         this.controleur=fn;

@@ -27,6 +27,7 @@ public class FenetreControleur{
     }
     //deroulement
     public void run(){
+        action = "Netflix";
         do{
             switch(action){
                 case "Acceuil":
@@ -57,22 +58,4 @@ public class FenetreControleur{
     public void setAction(String act){
         action=act;
     }
-    /*
-    //Déroulement
-    //fenetre.FormConnect();
-    do{
-        fenetre.Acceuil();
-        switch(){
-            case "S'identifier":
-                System.out.println("cas s'identifier");
-                fenetre.FormConnect();
-                break;
-            case "Nouveau compte":
-                System.out.println("cas s'nouveau compte");
-                System.out.println("creation nouveau compte");
-                break;
-        }
-
-    }while(end==true);
-    nv.lectureDAO(); */
 }
