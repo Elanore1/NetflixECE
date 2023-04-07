@@ -1,6 +1,7 @@
 package controleur;
 
 import modele.Fenetre;
+import vue.ViewBarreMenu;
 import vue.ViewContenu;
 import vue.ViewFenetre;
 
@@ -11,19 +12,24 @@ public class FenetreControleur{
     boolean end;//bool pour quitter la fenetre
     ViewFenetre fenetre;//Vue
     ViewContenu panel;
+
+    ViewBarreMenu barre;
     RechercheInfo DAO;//DAO
     String action;
 
-    public FenetreControleur(ViewFenetre fn, ViewContenu vc){
+    public FenetreControleur(ViewFenetre fn, ViewContenu vc, ViewBarreMenu bc){
         super();
         this.end=false;
         this.fenetre = fn;
         this.fenetre.setPanel(vc);
+        this.fenetre.setBarre(bc);
         this.panel = fenetre.getPanel();
+        this.barre = fenetre.getBarre();
         this.DAO=new RechercheInfo();
         this.action="Acceuil";
         fenetre.setController(this);
         panel.setController(this);
+        barre.setController(this);
     }
     //deroulement
     public void run(){

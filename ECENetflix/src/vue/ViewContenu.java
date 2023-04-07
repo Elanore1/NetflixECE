@@ -2,21 +2,23 @@ package vue;
 
 import controleur.FenetreControleur;
 import controleur.RechercheInfo;
+import modele.Film;
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicScrollBarUI;
-import javax.swing.plaf.synth.SynthGraphicsUtils;
-import javax.xml.stream.Location;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.ImageObserver;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.sql.SQLException;
-import java.text.AttributedCharacterIterator;
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 public class ViewContenu extends JPanel{
@@ -25,6 +27,8 @@ public class ViewContenu extends JPanel{
     //pour acceder au mot de passe et email de la Base
     RechercheInfo DAO = new RechercheInfo();
     public boolean var = false;
+
+    ArrayList<Film> listFilm;
 
     public ViewContenu() { // constructeur par surchargé
         setVisible(true);
@@ -48,6 +52,29 @@ public class ViewContenu extends JPanel{
             g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
             g2d.drawImage(img, 0, 0, getWidth(), getHeight(), null);
         }
+    }
+    public ImageIcon resizeImage(BufferedImage buffimage,int resizeWidth,int resizeHeight) throws IOException {
+        Image image = buffimage.getScaledInstance(resizeWidth,resizeHeight, java.awt.Image.SCALE_DEFAULT);
+        return new ImageIcon(image);
+
+    }
+
+    public BufferedImage chargerIm(String urlA) throws IOException {
+        BufferedImage image = null;
+        URL url = null;
+        try {
+            url = new URL(urlA);
+            URLConnection conn = url.openConnection();
+            conn.setRequestProperty("User-Agent", "Mozilla/5.0");
+            conn.connect();
+            InputStream urlStream = conn.getInputStream();
+            image = ImageIO.read(urlStream);
+            return image;
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+
+
     }
     //affichage d'un formulaire de connection
     public void FormConnection(){
@@ -345,15 +372,24 @@ public class ViewContenu extends JPanel{
         input.gridy = 5;
         add(container,input);
         updateUI();
-        revalidate();
     }
 
     public void Netflix(){
+        //On met ca juste pour les test d'affichage
+        listFilm=new ArrayList<Film>();
+        //test affichage
+        for(int i=0;i<10;i++){
+            Film nv = new Film();
+            nv.setUrlAffiche("https://i.pinimg.com/564x/8b/2f/a6/8b2fa6fb94810cd0d335b479896f7fc8.jpg");
+            nv.setUrlAfficheHor("https://boomstickcomics.com/wp-content/uploads/2014/06/another-avatar-1024x768.jpg");
+            listFilm.add(nv);
+        }
         //Appli Netflix
         JPanel container = new JPanel(null);
         container.setSize(2050,2500);
         container.setPreferredSize(container.getPreferredSize());
         container.setBackground(Color.red);
+        //Top 10
         JLabel top10 = new JLabel(new ImageIcon("src/images/top10.png"),JLabel.CENTER);
         JPanel separateur =new JPanel(null);
         JLabel titre = new JLabel("TOP 10 en France aujourd'hui");
@@ -363,7 +399,7 @@ public class ViewContenu extends JPanel{
         separateur.setBackground(new Color(20,20,20));
         separateur.setBounds(0,0,1200,100);
         separateur.add(titre);
-        top10.setBounds(0,100,2018,200);
+        top10.setBounds(0,100,2800,200);
         JButton droite = new JButton(" > ");
         JButton gauche = new JButton(" < ");
         droite.setBackground(new Color(0,0,0,150));
@@ -383,9 +419,9 @@ public class ViewContenu extends JPanel{
                 System.out.println(top10.getLocation());
                 //si on est de 1 à 7
                 if(top10.getLocation().equals(new Point(0,100))){
-                    top10.setLocation(-820,100);
-                    droite.setBounds(1941,0,50,200);
-                    gauche.setBounds(820,0,50,200);
+                    top10.setLocation(-1135,100);
+                    droite.setBounds(2256,0,50,200);
+                    gauche.setBounds(1133,0,50,200);
                 }else{
                     top10.setLocation(0,100);
                     droite.setBounds(1121,0,50,200);
@@ -421,9 +457,9 @@ public class ViewContenu extends JPanel{
                 System.out.println(top10.getLocation());
                 //si on est de 1 à 7
                 if(top10.getLocation().equals(new Point(0,100))){
-                    top10.setLocation(-820,100);
-                    droite.setBounds(1941,0,50,200);
-                    gauche.setBounds(820,0,50,200);
+                    top10.setLocation(-1135,100);
+                    droite.setBounds(2256,0,50,200);
+                    gauche.setBounds(1133,0,50,200);
                 }else{
                     top10.setLocation(0,100);
                     droite.setBounds(1121,0,50,200);
@@ -454,7 +490,85 @@ public class ViewContenu extends JPanel{
         });
         top10.add(droite);
         top10.add(gauche);
-        updateUI();
+        //on affiche les films top 10
+        for(int i=0;i<10;i++){
+            try{
+                //on appelle sspgrm pour charger une image depuis URL
+                BufferedImage image = chargerIm(listFilm.get(i).getUrlAffiche());
+                listFilm.get(i).setAffiche(new JButton(resizeImage(image,120,170)));
+                //JLabel affiche = new JLabel(resizeImage(image,120,170));
+                if(i<5)
+                    listFilm.get(i).getAffiche().setBounds(135 + i*220,10, 120, 170);
+                else
+                    listFilm.get(i).getAffiche().setBounds(135 + i*225,10, 120, 170);
+                listFilm.get(i).getAffiche().addMouseListener(new MouseListener() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        //aficher le film
+                    }
+                    @Override
+                    public void mousePressed(MouseEvent e) {}
+                    @Override
+                    public void mouseReleased(MouseEvent e){
+                        for(int i=0;i<listFilm.size();i++){
+                            if(e.getSource() == listFilm.get(i).getAffiche()) {
+                                listFilm.get(i).getAffiche().setSelected(false);
+                            }
+                        }
+                    }
+                    @Override
+                    public void mouseEntered(MouseEvent e) {
+                        //lorsqu'on entre sur l'image
+                        for(int i=0;i<listFilm.size();i++){
+                            if(e.getSource() == listFilm.get(i).getAffiche()) {
+                                listFilm.get(i).getAffiche().setSelected(false);
+                                try {
+                                    System.out.println("debut try");
+                                    BufferedImage image = chargerIm(listFilm.get(i).getUrlAfficheHor());
+                                    System.out.println("bouton créer");
+                                    listFilm.get(i).getAffiche().setIcon(resizeImage(image,250,200));
+                                    if(i<2)
+                                        listFilm.get(i).getAffiche().setBounds(90 + i*195,0, 250, 200);
+                                    else if(i<5)
+                                        listFilm.get(i).getAffiche().setBounds(140 + i*195,0, 250, 200);
+                                    else
+                                        listFilm.get(i).getAffiche().setBounds(130 + i*215,0, 250, 200);
+                                    System.out.println("changement boutton");
+                                    top10.updateUI();
+                                } catch (IOException ex) {
+                                    throw new RuntimeException(ex);
+                                }
+                            }
+                        }
+                    }
+                    @Override
+                    public void mouseExited(MouseEvent e) {
+                        for(int i=0;i<listFilm.size();i++){
+                            if(e.getSource() == listFilm.get(i).getAffiche()) {
+                                listFilm.get(i).getAffiche().setSelected(false);
+                                try {
+                                    System.out.println("debut try");
+                                    BufferedImage image = chargerIm(listFilm.get(i).getUrlAffiche());
+                                    System.out.println("bouton créer");
+                                    listFilm.get(i).getAffiche().setIcon(resizeImage(image,120,170));
+                                    if(i<5)
+                                        listFilm.get(i).getAffiche().setBounds(135 + i*220,10, 120, 170);
+                                    else
+                                        listFilm.get(i).getAffiche().setBounds(135 + i*225,10, 120, 170);
+                                    System.out.println("changement boutton");
+                                    top10.updateUI();
+                                } catch (IOException ex) {
+                                    throw new RuntimeException(ex);
+                                }
+                            }
+                        }
+                    }
+                });
+                top10.add(listFilm.get(i).getAffiche());
+            }catch(IOException e){
+                e.printStackTrace();
+            }
+        }
         container.add(separateur,BorderLayout.CENTER);
         container.add(top10,BorderLayout.CENTER);
         //on définie les barres en noir
@@ -473,6 +587,7 @@ public class ViewContenu extends JPanel{
         });
         scrollPane.setHorizontalScrollBar(null);
         add(scrollPane, BorderLayout.CENTER);
+        updateUI();
     }
     public void ChoixUtilisateurs(){
 

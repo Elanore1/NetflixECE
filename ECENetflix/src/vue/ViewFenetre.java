@@ -20,7 +20,6 @@ public class ViewFenetre extends JFrame{
 
     //constructeur par defaut
     public ViewFenetre(Fenetre fn) { // constructeur par surchargé
-        barmenu = new ViewBarreMenu();
         setSize (fn.getLargeur(), fn.getHauteur()); // donne une taille en hauteur et largeur à la fenêtre
         setTitle (fn.getTitre()); // donne un titre à la fenêtre
         setResizable(false); //On interdit la redimensionnement de la fenêtre
@@ -28,17 +27,18 @@ public class ViewFenetre extends JFrame{
         setLocationRelativeTo(null); //On centre la fenêtre sur l'écran
         setLayout(new BorderLayout());
         setVisible(true);
-        setJMenuBar(barmenu);
     }
     //Actualisation bar Menu
     public void BarreConnection(){
-        ViewBarreMenu barconnect = new ViewBarreMenu();
         //affichage barre menu dans l'app
-        barconnect.setBarreConnection();
-        setJMenuBar(barconnect);
+        barmenu.setBarreConnection();
+        setJMenuBar(barmenu);
     }
     //Formulaire pour se connecter
     public void FormConnect(){
+        barmenu.removeAll();
+        barmenu.setBarreVide();
+        setJMenuBar(barmenu);
         //Affichage formulaire de connection
         panel.removeAll();
         panel.FormConnection();
@@ -46,6 +46,9 @@ public class ViewFenetre extends JFrame{
         setVisible(true);
     }
     public void CreationCompte(){
+        barmenu.removeAll();
+        barmenu.setBarreVide();
+        setJMenuBar(barmenu);
         //Affichage formulaire de creation de compte
         panel.removeAll();
         panel.CreaCompte();
@@ -63,9 +66,14 @@ public class ViewFenetre extends JFrame{
         setVisible(true);
     }
     public void Acceuil(){
+        this.setLayout(new GridBagLayout());
+        barmenu.removeAll();
+        barmenu.setBarreVide();
+        setJMenuBar(barmenu);
         panel.removeAll();
         panel.Acceuil();
         panel.updateUI();
+        panel.setVisible(true);
         setPanel(panel);
         setVisible(true);
     }
@@ -80,5 +88,12 @@ public class ViewFenetre extends JFrame{
     }
     public ViewContenu getPanel(){
         return panel;
+    }
+    public void setBarre(ViewBarreMenu bar){
+        this.barmenu=bar;
+        setJMenuBar(barmenu);
+    }
+    public ViewBarreMenu getBarre(){
+        return barmenu;
     }
 }

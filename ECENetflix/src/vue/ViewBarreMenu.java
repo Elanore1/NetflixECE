@@ -1,5 +1,6 @@
 package vue;
 
+import controleur.FenetreControleur;
 import modele.BarreMenu;
 import javax.swing.*;
 import java.awt.*;
@@ -9,6 +10,7 @@ import java.util.Objects;
 
 public class ViewBarreMenu extends JMenuBar {
     //caracteristique de la barre
+    FenetreControleur controleur;//controleur
     private BarreMenu menu = new BarreMenu();
     //Valeur dans notre barre de menu
     private JMenu acceuil = new JMenu("  Accueil  ");
@@ -19,6 +21,20 @@ public class ViewBarreMenu extends JMenuBar {
     private JMenu icone = new JMenu("          ");
     private JTextField recherche = new JTextField(" Titres, personnes, genres ",20);
     public ViewBarreMenu() { // constructeur barre de menu originale
+        setBackground(Color.BLACK);//couleur de fond noir
+        setBorderPainted(true);//colorie la bordure
+        JMenu logo = new JMenu("");//logo au debut de la barre de menu
+        logo.setIcon(new ImageIcon( "src/images/logo1.png"));
+        logo.disable();//pour ne pas pouvoir selectionner
+        JMenu vide = new JMenu("     ");
+        vide.disable();//pour ne pas pouvoir selectionner
+        add(vide);
+        add(vide);
+        add(logo);
+        add(vide);
+        add(vide);
+    }
+    public void setBarreVide(){
         setBackground(Color.BLACK);//couleur de fond noir
         setBorderPainted(true);//colorie la bordure
         JMenu logo = new JMenu("");//logo au debut de la barre de menu
@@ -131,6 +147,9 @@ public class ViewBarreMenu extends JMenuBar {
             @Override
             public void mouseClicked(MouseEvent e) {
                 JMenuItem action = (JMenuItem) e.getSource();
+                System.out.println("action : "+action.getText());
+                if(action.getText().equals("  Se déconnecter  "))
+                    controleur.setAction("Acceuil");
                 action.setEnabled(false);
             }
             @Override
@@ -222,5 +241,8 @@ public class ViewBarreMenu extends JMenuBar {
         //pour mettre l'icone tout au bout de la barre
         add(Box.createHorizontalGlue());
         add(icone);
+    }
+    public void setController(FenetreControleur fn){
+        this.controleur=fn;
     }
 }
