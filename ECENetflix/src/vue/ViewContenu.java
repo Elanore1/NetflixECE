@@ -1,5 +1,6 @@
 package vue;
 
+import controleur.ControleurCompte;
 import controleur.FenetreControleur;
 import controleur.RechercheInfo;
 import modele.Film;
@@ -27,6 +28,9 @@ public class ViewContenu extends JPanel{
     //pour acceder au mot de passe et email de la Base
     RechercheInfo DAO = new RechercheInfo();
     public boolean var = false;
+
+    ControleurCompte compte;
+
 
     ArrayList<Film> listFilm;
 
@@ -593,12 +597,11 @@ public class ViewContenu extends JPanel{
 
     }
 
-    public void CreaCompte()
-    {
-        ///creation d'un compte
+
+    public void CreaCompte(){
         //on met image en fond
         try {
-            setImage("src/images/FondAcceuil.png");
+            setImage("D:\\EXO JAVA\\NetflixECE-master\\NetflixECE-master\\ECENetflix\\src\\images/FondAcceuil.png");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }//container qui a une nouvelle couleur
@@ -666,7 +669,7 @@ public class ViewContenu extends JPanel{
         });
         bconfirm.getModel().addChangeListener(new ChangeListener() {
             //verif que le mail est valable
-            private boolean validateMail(String mail){
+         /*   private boolean validateMail(String mail){
                 //Regular Expression pour un mail
                 //on verif que le mail est valide
                 String regx = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
@@ -716,7 +719,7 @@ public class ViewContenu extends JPanel{
                     else
                         return "special";
                 }
-            }
+            }*/
             @Override
             public void stateChanged(ChangeEvent e) {
                 ButtonModel model = bconfirm.getModel();
@@ -724,7 +727,7 @@ public class ViewContenu extends JPanel{
                 if (model.isArmed()) {
                     boolean mdpSaisie=false;
                     //Validation de l'email
-                    if(validateMail(TextEmail.getText())){
+                    if(compte.NouveauMail(TextEmail.getText())){
                         //le mail est valide
                         BadEmail.setForeground(Color.green);
                         BadEmail.setText("L'email saisi est valide");
@@ -742,7 +745,7 @@ public class ViewContenu extends JPanel{
                     }
                     //si un bon email a été entré
                     if(mdpSaisie==true){
-                        String verif = validateMDP(TextMDP.getText());
+                        String verif = compte.NouveauMDP(TextMDP.getText());
                         //Validation mdp
                         if(verif=="true"){
                             //le mail est valide
@@ -765,6 +768,7 @@ public class ViewContenu extends JPanel{
                     updateUI();
                 } else {//relachement
                     if(var==true){
+                        compte.NouveauCompte( TextEmail.getText(),TextMDP.getText() );
                         //pour laisser un temps avant de s connecter
                         try {
                             //on attend et on quitte
@@ -872,7 +876,6 @@ public class ViewContenu extends JPanel{
         add(container,input);
         updateUI();
     }
-
     public void setController(FenetreControleur fn){
         this.controleur=fn;
     }
