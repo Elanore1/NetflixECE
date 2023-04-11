@@ -29,7 +29,7 @@ public class ViewContenu extends JPanel{
     RechercheInfo DAO = new RechercheInfo();
     public boolean var = false;
 
-    ControleurCompte compte;
+    ControleurCompte compte =new ControleurCompte();
 
 
     ArrayList<Film> listFilm;
@@ -157,7 +157,7 @@ public class ViewContenu extends JPanel{
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
-                System.out.println(text);
+               // System.out.println(text);
                 if(text!=null) {
                     return true;
                 }else
@@ -190,7 +190,7 @@ public class ViewContenu extends JPanel{
                         BadEmail.setForeground(Color.green);
                         BadEmail.setText("Le compte associé a été trouvé");
                         TextEmail.setEditable(false);
-                        System.out.println(TextMDP.getText());
+                       // System.out.println(TextMDP.getText());
                         mdpSaisie=true;
                     }else if(!(TextEmail.getText().length() >0)){//si il n'y a rien dedans
                         BadEmail.setText("Saisir un e-mail");//on affiche rien
@@ -322,7 +322,7 @@ public class ViewContenu extends JPanel{
     public void Acceuil(){
         //on met image en fond
         try {
-            setImage("src/images/FondAcceuil.png");
+            setImage("D:\\EXO JAVA\\NetflixECE-master\\NetflixECE-master\\ECENetflix\\src\\images/FondAcceuil.png");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }//container qui a image en fond
@@ -727,6 +727,8 @@ public class ViewContenu extends JPanel{
                 if (model.isArmed()) {
                     boolean mdpSaisie=false;
                     //Validation de l'email
+
+                    System.out.println( TextEmail.getText() );
                     if(compte.NouveauMail(TextEmail.getText())){
                         //le mail est valide
                         BadEmail.setForeground(Color.green);
@@ -768,7 +770,11 @@ public class ViewContenu extends JPanel{
                     updateUI();
                 } else {//relachement
                     if(var==true){
-                        compte.NouveauCompte( TextEmail.getText(),TextMDP.getText() );
+                        try {
+                            compte.NouveauCompte( TextEmail.getText(),TextMDP.getText() );
+                        } catch (SQLException ex) {
+                            throw new RuntimeException( ex );
+                        }
                         //pour laisser un temps avant de s connecter
                         try {
                             //on attend et on quitte
@@ -776,6 +782,8 @@ public class ViewContenu extends JPanel{
                         } catch (InterruptedException ex) {
                             throw new RuntimeException(ex);
                         }
+                        //TextEmail.getText()="";
+                       // TextMDP.getText()="";
                         controleur.setAction("Choix Utilisateurs");
                     }
                 }

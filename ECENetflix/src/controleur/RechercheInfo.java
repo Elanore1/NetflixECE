@@ -15,7 +15,7 @@ public class RechercheInfo {
             try {
                 // tentative de connexion si les 4 attributs sont remplis
                 //maconnexion = new Connexion("jps", "root", "");
-                maconnexion = new ConnexionDB("projetinfo", "root", "root");
+                maconnexion = new ConnexionDB("projetinfo", "root", "");
             } catch (ClassNotFoundException cnfe) {
                 System.out.println("Connexion echouee : probleme de classe");
                 cnfe.printStackTrace();
@@ -38,16 +38,27 @@ public class RechercheInfo {
         }
     }
 
-    public void NouveauCompte(String mail,String mdp,String utilisateur)
-    {
-        String requete = "INSERT INTO compte (mail, mdp, utilisateur) VALUES('"+mail+"', '"+mdp+"', '"+utilisateur+"');";
+    public void NouveauCompte(String mail,String mdp,String utilisateur) throws SQLException {
 
-        maconnexion.ajouterRequeteMaj( requete );
+
+        String requete = "INSERT INTO compte (email, mdp, usager) VALUES ('"+mail+"','"+mdp+"','"+utilisateur+"');";
+      //  System.out.println( requete );
+
+        maconnexion.executeUpdate(requete);
+        //afficherRes(requete);
+
+
     }
 
-    public void changerUtilisateur(String mail, String mdp, String Utilisateur)
+    public void NouveauUtilisateur(String pseudo)
+    {
+
+    }
+
+    public void changerNomUtilisateur(String mail, String mdp, String Utilisateur)
     {
         maconnexion.ajouterRequeteMaj("UPDATE compte SET utilisateur='"+Utilisateur+"' WHERE mail='"+mail+"' AND mdp='"+mdp+"';" );
+
     }
 
     public void afficherLignes(String nomTable) {
@@ -56,6 +67,7 @@ public class RechercheInfo {
             System.out.println("Afficher Lignes");
             // recupérér les résultats de la table selectionnee
             liste = maconnexion.remplirChampsTable(nomTable);
+
 
             // afficher les champs de la table selectionnee
             for (String liste1 : liste) {
@@ -99,9 +111,12 @@ public class RechercheInfo {
     public ArrayList<String> afficherRes(String requeteSelectionnee) throws SQLException {
         ArrayList<String> liste = null;
         try {
-            System.out.println("Afficher res requetes");
+            System.out.println("Afficher les requetes");
             // recupérér les résultats de la requete selectionnee
             liste = maconnexion.remplirChampsRequete(requeteSelectionnee);
+
+            for(int i=0;i<liste.size();i++)
+            System.out.println( liste.get( i ) );
 
             for (String liste1 : liste) {
                 System.out.println(liste1);
@@ -121,7 +136,7 @@ public class RechercheInfo {
             try {
                 // tentative de connexion si les 4 attributs sont remplis
                 //maconnexion = new Connexion("jps", "root", "");
-                maconnexion = new ConnexionDB("projetinfo", "root", "root");
+                maconnexion = new ConnexionDB("projetinfo", "root", "");
 
                 // effacer les listes de tables et de requêtes
                 listeDeTables.removeAll();

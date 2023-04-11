@@ -18,14 +18,23 @@ public class ControleurCompte {
     private   ViewContenu panel;
     private   RechercheInfo DAO;//DAO
 
+    private Utilisateur utilisateur;
+
     private Compte compte;
 
     public Compte getCompte() {
         return compte;
     }
 
-    public void NouveauCompte(String email,String mdp)
+    public ControleurCompte ()
     {
+        this.DAO=new RechercheInfo();
+        this.compte=new Compte();
+        this.utilisateur=new Utilisateur();
+
+    }
+
+    public void NouveauCompte(String email,String mdp) throws SQLException {
         //On crée un nouvel utilisateur avec des données prédéfinies
         Utilisateur a =nouveauUtilisateur();
 
@@ -37,6 +46,7 @@ public class ControleurCompte {
         compte.setUtilisateuractuel( 0 );
         //On ajoute a la base de données le nouveau compte
         DAO.NouveauCompte( email,mdp,"Utilisateur1");
+
 
         //String requete = "INSERT INTO compte (mail, mdp, utilisateur) VALUES('"+email+"', '"+mdp+"', 'Utilisateur1"+utilisateur+"');";
 
