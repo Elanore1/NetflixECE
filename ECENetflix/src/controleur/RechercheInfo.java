@@ -37,6 +37,19 @@ public class RechercheInfo {
             listeDeTables.add(table);
         }
     }
+
+    public void NouveauCompte(String mail,String mdp,String utilisateur)
+    {
+        String requete = "INSERT INTO compte (mail, mdp, utilisateur) VALUES('"+mail+"', '"+mdp+"', '"+utilisateur+"');";
+
+        maconnexion.ajouterRequeteMaj( requete );
+    }
+
+    public void changerUtilisateur(String mail, String mdp, String Utilisateur)
+    {
+        maconnexion.ajouterRequeteMaj("UPDATE compte SET utilisateur='"+Utilisateur+"' WHERE mail='"+mail+"' AND mdp='"+mdp+"';" );
+    }
+
     public void afficherLignes(String nomTable) {
         try {
             ArrayList<String> liste;
