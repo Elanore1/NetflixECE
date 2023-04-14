@@ -1,14 +1,11 @@
 package vue;
+
 import controleur.FenetreControleur;
 import modele.Fenetre;
 
 import javax.swing.*;
-import javax.swing.plaf.basic.BasicScrollBarUI;
 import java.awt.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.Observable;
-import java.util.Observer;
+import java.sql.SQLException;
 
 public class ViewFenetre extends JFrame{
     FenetreControleur controleur;
@@ -27,18 +24,14 @@ public class ViewFenetre extends JFrame{
         setLocationRelativeTo(null); //On centre la fenêtre sur l'écran
         setLayout(new BorderLayout());
         setVisible(true);
-    }
-    //Actualisation bar Menu
-    public void BarreConnection(){
-        //affichage barre menu dans l'app
-        barmenu.setBarreConnection();
-        setJMenuBar(barmenu);
-    }
-    //Formulaire pour se connecter
-    public void FormConnect(){
+        barmenu=new ViewBarreMenu();
         barmenu.removeAll();
         barmenu.setBarreVide();
         setJMenuBar(barmenu);
+    }
+    //Actualisation bar Menu
+    //Formulaire pour se connecter
+    public void FormConnect(){
         //Affichage formulaire de connection
         panel.removeAll();
         panel.FormConnection();
@@ -46,9 +39,6 @@ public class ViewFenetre extends JFrame{
         setVisible(true);
     }
     public void CreationCompte(){
-        barmenu.removeAll();
-        barmenu.setBarreVide();
-        setJMenuBar(barmenu);
         //Affichage formulaire de creation de compte
         panel.removeAll();
         panel.CreaCompte();
@@ -57,19 +47,38 @@ public class ViewFenetre extends JFrame{
         setVisible(true);
     }
     public void AppNetflix(){
+        barmenu.setBarreConnection();
+        panel.removeAll();
         this.setLayout(null);
-        BarreConnection();
+        panel.setLayout(null);
         panel.removeAll();
         panel.Netflix();
         panel.updateUI();
+        barmenu.updateUI();
+        setPanel(panel);
+        setVisible(true);
+    }
+    public void LancementFilm(){
+        panel.removeAll();
+        this.setLayout(null);
+        panel.removeAll();
+        panel.filmView(controleur.getFilm());
+        setPanel(panel);
+        setVisible(true);
+
+    }
+    public void ChoixUtilisateur() throws SQLException{
+        System.out.println("chlix utilisateur");
+        this.setLayout(null);
+        panel.removeAll();
+        panel.ChoixUtilisateurs();
+        panel.updateUI();
+        panel.setVisible( true );
         setPanel(panel);
         setVisible(true);
     }
     public void Acceuil(){
         this.setLayout(new GridBagLayout());
-        barmenu.removeAll();
-        barmenu.setBarreVide();
-        setJMenuBar(barmenu);
         panel.removeAll();
         panel.Acceuil();
         panel.updateUI();

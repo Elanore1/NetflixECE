@@ -115,10 +115,35 @@ public class ConnexionDB {
      * @return
      * @throws SQLException
      */
-    public ArrayList remplirChampsRequete(String requete) throws SQLException {
+    public ArrayList<String> recupererDonnees(String requete) throws SQLException {
         // récupération de l'ordre de la requete
         rset = stmt.executeQuery(requete);
 
+        // récupération du résultat de l'ordre
+        rsetMeta = rset.getMetaData();
+
+        // calcul du nombre de colonnes du resultat
+        int nbColonne = rsetMeta.getColumnCount();
+
+        // création d'une ArrayList de String
+        ArrayList<String> liste = new ArrayList<>();
+
+        // pour chaque ligne du résultat
+        while (rset.next()) {
+            // ajouter chaque champ de la ligne dans l'ArrayList
+            for (int i = 1; i <= nbColonne; i++) {
+                liste.add(rset.getString(i));
+            }
+        }
+
+        // Retourner l'ArrayList
+        return liste;
+    }
+    public ArrayList remplirChampsRequete(String requete) throws SQLException {
+        System.out.println("debut requette");
+        // récupération de l'ordre de la requete
+        rset = stmt.executeQuery(requete);
+        System.out.println("apres requete");
         // récupération du résultat de l'ordre
         rsetMeta = rset.getMetaData();
 
@@ -149,7 +174,6 @@ public class ConnexionDB {
         // Retourner l'ArrayList
         return liste;
     }
-
     /**
      * Méthode qui execute une requete de MAJ en parametre
      * @param requeteMaj

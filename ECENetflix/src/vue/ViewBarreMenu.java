@@ -35,6 +35,19 @@ public class ViewBarreMenu extends JMenuBar {
         add(vide);
     }
     public void setBarreVide(){
+        removeAll();
+        icone.removeAll();
+        setBackground(Color.BLACK);//couleur de fond noir
+        setBorderPainted(true);//colorie la bordure
+        JMenu logo = new JMenu("");//logo au debut de la barre de menu
+        logo.setIcon(new ImageIcon( "src/images/logo1.png"));
+        logo.disable();//pour ne pas pouvoir selectionner
+
+    }
+    //Une fois que l'utilisateur est connécté on montre la barre de menu d'acceuil
+    public void setBarreConnection(){
+        removeAll();
+        icone.removeAll();
         setBackground(Color.BLACK);//couleur de fond noir
         setBorderPainted(true);//colorie la bordure
         JMenu logo = new JMenu("");//logo au debut de la barre de menu
@@ -46,11 +59,7 @@ public class ViewBarreMenu extends JMenuBar {
         add(vide);
         add(logo);
         add(vide);
-        add(vide);
-    }
-    //Une fois que l'utilisateur est connécté on montre la barre de menu d'acceuil
-    public void setBarreConnection(){
-        JMenu vide = new JMenu("                    ");
+        JMenu vide1 = new JMenu("                    ");
         JMenu vide2 = new JMenu("                       ");
         vide2.disable();
         vide.disable();//pour ne pas pouvoir selectionner
@@ -100,7 +109,11 @@ public class ViewBarreMenu extends JMenuBar {
                 }
                 //pour savoir sur quel action on est
                 if(Objects.equals(acceuil,action)){
-                    System.out.println("acceuil");
+                    for(int i=0;i<10;i++){
+                        controleur.getBDD().getTop().get(i).setAffiche(null);
+                    }
+                    menu.setMenuInfo(0);
+                    controleur.setAction("Netflix");
                 }
             }
             @Override
@@ -191,10 +204,10 @@ public class ViewBarreMenu extends JMenuBar {
         icone.addMouseListener(ListenerMenu);
         //logo recherche pour chercher un film ou serie etc...
         LogoRecherche.addMouseListener(ListenerMenu);
-        JMenuItem param = new JMenuItem("  Paramètres  ");
-        JMenuItem compte = new JMenuItem("  Compte  ");
-        JMenuItem aide = new JMenuItem("  Aide  ");
-        JMenuItem deconnect = new JMenuItem("  Se déconnecter  ");
+        JMenuItem param = new JMenuItem("  Paramètres  ",null);
+        JMenuItem compte = new JMenuItem("  Compte  ",null);
+        JMenuItem aide = new JMenuItem("  Aide  ",null);
+        JMenuItem deconnect = new JMenuItem("  Se déconnecter  ",null);
         icone.setForeground(Color.black);
         icone.setContentAreaFilled(true);
         //on colorie en noir et blanc
@@ -208,13 +221,17 @@ public class ViewBarreMenu extends JMenuBar {
         deconnect.setBackground(Color.black);
         //taille des sous menu et colori bordure
         param.setBorder(null);
-        param.setPreferredSize(new Dimension(super.getWidth(), 50));
+        param.setPreferredSize(new Dimension(110, 50));
+        param.setLayout(new FlowLayout());
         compte.setBorder(null);
-        compte.setPreferredSize(new Dimension(super.getWidth(), 50));
+        compte.setPreferredSize(new Dimension(110, 50));
+        compte.setLayout(new FlowLayout());
         aide.setBorder(null);
-        aide.setPreferredSize(new Dimension(super.getWidth(), 50));
+        aide.setPreferredSize(new Dimension(110, 50));
+        aide.setLayout(new FlowLayout());
         deconnect.setBorder(null);
         deconnect.setPreferredSize(new Dimension(110, 50));
+        deconnect.setLayout(new FlowLayout());
         param.addMouseListener(ListenerMenuItem);
         compte.addMouseListener(ListenerMenuItem);
         aide.addMouseListener(ListenerMenuItem);
@@ -234,7 +251,6 @@ public class ViewBarreMenu extends JMenuBar {
         add(serie);
         add(nouveautés);
         add(maListe);
-        add(vide);
         add(vide);
         add(LogoRecherche);
         add(recherche);

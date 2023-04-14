@@ -1,5 +1,8 @@
 package controleur;
 
+import modele.Film;
+import modele.NetflixBDD;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -101,6 +104,86 @@ public class RechercheInfo {
     }
     private void remplirTables(){
         maconnexion.ajouterTable("compte");
+        maconnexion.ajouterTable("film");
+        maconnexion.ajouterTable("utilisateur");
+    }
+    public NetflixBDD chargerFilm() throws SQLException {
+        NetflixBDD BDDFilm = new NetflixBDD();
+        ArrayList<Film> _top = new ArrayList<Film>();
+        ArrayList<Film> _nouveaute = new ArrayList<Film>();
+        ArrayList<Film> _serie = new ArrayList<Film>();
+        ArrayList<Film> _film = new ArrayList<Film>();
+        ArrayList<Film> _anime = new ArrayList<Film>();
+        ArrayList<String> liste = new ArrayList<String>();
+        ArrayList<String> acteurs = new ArrayList<String>();
+        ArrayList<String> genre = new ArrayList<String>();
+        String[] act,gen,rep;
+        String reqMDP ="SELECT * FROM film;";
+        liste = maconnexion.remplirChampsRequete(reqMDP);
+        for(int a=0;a<liste.size();a++){
+            rep = liste.get(a).split(",");
+            for(int i=0;i<rep.length;i++){
+                Film nv =  new Film();
+                nv.setTitre(rep[i]);
+                nv.setRealisateur(rep[i+1]);
+                act = rep[i+2].split("\\|");
+                for(int j=0;j<act.length;j++){
+                    acteurs.add(act[j]);
+                }
+                nv.setActeurs(acteurs);
+                acteurs.clear();
+                gen = rep[i+3].split("\\|");
+                for(int j=0;j<gen.length;j++){
+                    genre.add(gen[j]);
+                }
+                nv.setGenre(genre);
+                genre.clear();
+                nv.setUrlAffiche(rep[i+4]);
+                nv.setUrlAfficheHor(rep[i+5]);
+                nv.setUrlfilm(rep[i+6]);
+                nv.setDescription(rep[i+7]);
+                nv.setDuree(rep[i+8]);
+                String temp = rep[i + 9].replaceAll("\\n+","");
+                if(temp.equals("top10")){
+                    _top.add(nv);
+                }else if(temp.equals("serie")){
+                    _serie.add(nv);
+                }else if(temp.equals("film")){
+                    _film.add(nv);
+                }else if(temp.equals("anime")){
+                    _anime.add(nv);
+                }else{
+                    _nouveaute.add(nv);
+                }
+                i+=10;
+            }
+        }
+
+        BDDFilm.setFilms(_film);
+        BDDFilm.setNouveaute(_nouveaute);
+        BDDFilm.setSerie(_serie);
+        BDDFilm.setTop(_top);
+        BDDFilm.setAnime(_anime);
+        return BDDFilm;
+    }
+
+    public void NouveauCompte(String mail,String mdp,String utilisateur) throws SQLException {
+        String requete = "INSERT INTO compte (email, mdp, usager) VALUES ('"+mail+"','"+mdp+"','"+utilisateur+"');";
+        maconnexion.executeUpdate(requete);
+    }
+    public void changerNomUtilisateur(String mail, String Utilisateur) throws SQLException {
+        maconnexion.executeUpdate("UPDATE compte SET utilisateur='"+Utilisateur+"' WHERE mail='"+mail+"';" );
+    }
+    public void NouveauUtilisateur(String pseudo,String mail,String image) throws SQLException {
+        maconnexion.executeUpdate("INSERT INTO utilisateur(mail,pseudo,image)  VALUES ('"+mail+"','"+pseudo+"','"+image+"');" );
+    }
+    public ArrayList<String>RecupererUtilisateurs(String email) throws SQLException {
+        String requete = "SELECT * FROM utilisateur WHERE email='"+email+"';";
+
+        ArrayList<String>liste=new ArrayList<>();
+        liste=maconnexion.recupererDonnees( requete );
+        //  System.out.println( liste.get(0) );
+        return liste;
     }
 
     void lectureDAO(){
