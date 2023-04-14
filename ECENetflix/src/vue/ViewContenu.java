@@ -183,6 +183,7 @@ public class ViewContenu extends JPanel{
             @Override
             public void stateChanged(ChangeEvent e) {
                 ButtonModel model = bconfirm.getModel();
+                boolean it = true;
                 //on appuie sur le bouton
                 if (model.isArmed()) {
                     boolean mdpSaisie=false;
@@ -224,14 +225,17 @@ public class ViewContenu extends JPanel{
                     //pour actualiser notre panel
                     updateUI();
                 } else {//relachement
-                    if(var==true){
+                    if(var==true && it ==true){
                         //pour laisser un temps avant de s connecter
+                        it=false;
                         try {
+
                             //on attend et on quitte
                             Thread.sleep(2000);
                         } catch (InterruptedException ex) {
                             throw new RuntimeException(ex);
                         }
+                        compte.EnregistreCompte( TextEmail.getText(),TextMDP.getText() );
                         controleur.setAction("Choix Utilisateurs");
                     }
                 }
@@ -595,15 +599,26 @@ public class ViewContenu extends JPanel{
         add(scrollPane, BorderLayout.CENTER);
         updateUI();
     }
+
+
+    public void Proprietaire()
+    {
+
+    }
     public void ChoixUtilisateurs() throws SQLException {
-        try {
-            setImage("D:\\EXO JAVA\\NetflixECE-master\\NetflixECE-master\\ECENetflix\\src\\images/FondAcceuil.png");
+     /*   try {
+            setImage("D:\\EXO JAVA\\NetflixECE-master\\NetflixECE-master\\ECENetflix\\src\\images/Screenshot_1.png");
         } catch (IOException e) {
             throw new RuntimeException(e);
-        }
+        }*/
 
         ArrayList<Utilisateur> utilisateur;
         utilisateur = compte.RecuperUtilisateurs();
+
+        for(int i =0;i<utilisateur.size();i++)
+        {
+           System.out.println(   utilisateur.get( i ).getPseudo());
+        }
 
         JPanel container = new JPanel(new GridBagLayout());
         container.setPreferredSize(new Dimension(600, 500));
@@ -614,6 +629,7 @@ public class ViewContenu extends JPanel{
         texte.setFont(new Font("Arial", Font.BOLD, 20));
         texte.setForeground(Color.WHITE);
         texte.setHorizontalAlignment(JLabel.CENTER);
+        texte.setBounds(10,15,400,60);
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(20, 20, 20, 20);
@@ -644,7 +660,7 @@ public class ViewContenu extends JPanel{
         gbc.gridy++;
         gbc.gridwidth = 3;
         container.add(texte, gbc);
-
+        updateUI();
 
     }
 

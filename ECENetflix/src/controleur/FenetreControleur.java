@@ -34,7 +34,7 @@ public class FenetreControleur{
     }
     //deroulement
     public void run() throws SQLException {
-        action = "Netflix";
+        //action = "Choix Utilisateur";
         do{
             switch(action){
                 case "Acceuil":

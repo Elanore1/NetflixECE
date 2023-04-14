@@ -40,8 +40,10 @@ public class RechercheInfo {
 
     public ArrayList<String>RecupererUtilisateurs(String email) throws SQLException {
         String requete = "SELECT * FROM utilisateur WHERE email='"+email+"';";
-        ArrayList<String>liste;
+
+        ArrayList<String>liste=new ArrayList<>();
         liste=maconnexion.remplirChampsRequete( requete );
+        System.out.println( liste.get(0) );
         return liste;
     }
 
