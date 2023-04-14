@@ -40,19 +40,6 @@ public class RechercheInfo {
             listeDeTables.add(table);
         }
     }
-
-    public void NouveauCompte(String mail,String mdp,String utilisateur)
-    {
-        String requete = "INSERT INTO compte (mail, mdp, utilisateur) VALUES('"+mail+"', '"+mdp+"', '"+utilisateur+"');";
-
-        maconnexion.ajouterRequeteMaj( requete );
-    }
-
-    public void changerUtilisateur(String mail, String mdp, String Utilisateur)
-    {
-        maconnexion.ajouterRequeteMaj("UPDATE compte SET utilisateur='"+Utilisateur+"' WHERE mail='"+mail+"' AND mdp='"+mdp+"';" );
-    }
-
     public void afficherLignes(String nomTable) {
         try {
             ArrayList<String> liste;
@@ -190,15 +177,14 @@ public class RechercheInfo {
     public void NouveauUtilisateur(String pseudo,String mail,String image) throws SQLException {
         maconnexion.executeUpdate("INSERT INTO utilisateur(mail,pseudo,image)  VALUES ('"+mail+"','"+pseudo+"','"+image+"');" );
     }
-    public ArrayList<String>RecupererUtilisateurs(String email) throws SQLException {
-        String requete = "SELECT * FROM utilisateur WHERE email='"+email+"';";
-
-        ArrayList<String>liste=new ArrayList<>();
-        liste=maconnexion.recupererDonnees( requete );
-        //  System.out.println( liste.get(0) );
+    public ArrayList<String> RecupererUtilisateurs(String email) throws SQLException {
+        String requete = "SELECT * FROM utilisateur WHERE mail LIKE '"+email+"';";
+        System.out.println("requete: "+requete);
+        ArrayList<String> liste = new ArrayList<String>();
+        maconnexion.ajouterRequete(requete);
+        liste=(ArrayList<String>)maconnexion.remplirChampsRequete(requete).clone();
         return liste;
     }
-
     void lectureDAO(){
         try {
             try {
