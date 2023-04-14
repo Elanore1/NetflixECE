@@ -67,13 +67,13 @@ public class ViewFenetre extends JFrame{
         setVisible(true);
     }
     public void ChoixUtilisateur() throws SQLException {
-        this.setLayout( null );
+
         barmenu.removeAll();
         barmenu.setBarreVide();
+        BarreConnection();
         panel.removeAll();
         panel.ChoixUtilisateurs();
         panel.updateUI();
-        panel.setVisible( true );
         setPanel( panel );
         setVisible( true );
     }

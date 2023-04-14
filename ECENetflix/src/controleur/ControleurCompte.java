@@ -67,11 +67,11 @@ public class ControleurCompte {
 
     public ArrayList<Utilisateur> RecuperUtilisateurs() throws SQLException {
 
-        System.out.println( compte.getEmail() );
+    //    System.out.println( compte.getEmail() );
         ArrayList<String>liste =DAO.RecupererUtilisateurs( compte.getEmail( ) );
         ArrayList<Utilisateur>a = new ArrayList<>() ;
         String mail;
-        System.out.println( liste.get(0) );
+     //   System.out.println( liste.get(0) );
         String pe = null;
         String image;
 
@@ -79,7 +79,7 @@ public class ControleurCompte {
         
         for(int i=0;i< liste.size( );i++)
         {
-            System.out.println(liste.get( i ) );
+           // System.out.println(liste.get( i ) );
             if(i%3==0)
                 mail=liste.get( i );
             else if(i%3==1)

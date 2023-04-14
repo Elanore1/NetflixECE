@@ -615,6 +615,7 @@ public class ViewContenu extends JPanel{
         ArrayList<Utilisateur> utilisateur;
         utilisateur = compte.RecuperUtilisateurs();
 
+       // System.out.println( utilisateur.size() );
         for(int i =0;i<utilisateur.size();i++)
         {
            System.out.println(   utilisateur.get( i ).getPseudo());

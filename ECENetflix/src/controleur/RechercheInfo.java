@@ -42,8 +42,8 @@ public class RechercheInfo {
         String requete = "SELECT * FROM utilisateur WHERE email='"+email+"';";
 
         ArrayList<String>liste=new ArrayList<>();
-        liste=maconnexion.remplirChampsRequete( requete );
-        System.out.println( liste.get(0) );
+        liste=maconnexion.recupererDonnees( requete );
+      //  System.out.println( liste.get(0) );
         return liste;
     }
 

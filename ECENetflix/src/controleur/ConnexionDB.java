@@ -109,6 +109,32 @@ public class ConnexionDB {
         return liste;
     }
 
+    public ArrayList<String> recupererDonnees(String requete) throws SQLException {
+        // récupération de l'ordre de la requete
+        rset = stmt.executeQuery(requete);
+
+        // récupération du résultat de l'ordre
+        rsetMeta = rset.getMetaData();
+
+        // calcul du nombre de colonnes du resultat
+        int nbColonne = rsetMeta.getColumnCount();
+
+        // création d'une ArrayList de String
+        ArrayList<String> liste = new ArrayList<>();
+
+        // pour chaque ligne du résultat
+        while (rset.next()) {
+            // ajouter chaque champ de la ligne dans l'ArrayList
+            for (int i = 1; i <= nbColonne; i++) {
+                liste.add(rset.getString(i));
+            }
+        }
+
+        // Retourner l'ArrayList
+        return liste;
+    }
+
+
     /**
      * Methode qui retourne l'ArrayList des champs de la requete en parametre
      * @param requete
