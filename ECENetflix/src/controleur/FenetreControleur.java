@@ -5,6 +5,7 @@ import vue.ViewBarreMenu;
 import vue.ViewContenu;
 import vue.ViewFenetre;
 
+import java.sql.SQLException;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -32,7 +33,7 @@ public class FenetreControleur{
         barre.setController(this);
     }
     //deroulement
-    public void run(){
+    public void run() throws SQLException {
         action = "Netflix";
         do{
             switch(action){
@@ -53,6 +54,7 @@ public class FenetreControleur{
                     action="pause";
                     break;
                 case "Choix Utilisateurs":
+                    fenetre.ChoixUtilisateur();
                     System.out.println("choix des utilisateurs");
                     action="pause";
                 break;

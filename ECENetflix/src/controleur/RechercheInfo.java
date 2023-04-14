@@ -39,7 +39,7 @@ public class RechercheInfo {
     }
 
     public ArrayList<String>RecupererUtilisateurs(String email) throws SQLException {
-        String requete = "SELECT * FROM utilisateur WHERE email='"+email+"');";
+        String requete = "SELECT * FROM utilisateur WHERE email='"+email+"';";
         ArrayList<String>liste;
         liste=maconnexion.remplirChampsRequete( requete );
         return liste;
@@ -61,7 +61,7 @@ public class RechercheInfo {
     }
 
     public void NouveauUtilisateur(String pseudo,String mail,String image) throws SQLException {
-        maconnexion.executeUpdate("INSERT INTO utilisateur (mail,pseudo,image)  VALUES ('"+mail+"','"+pseudo+"','"+image+"');" );
+        maconnexion.executeUpdate("INSERT INTO utilisateur (email,pseudo,photo)  VALUES ('"+mail+"','"+pseudo+"','"+image+"');" );
        // maconnexion.executeUpdate(requete);
     }
 

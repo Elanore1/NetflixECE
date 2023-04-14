@@ -86,7 +86,7 @@ public class ViewContenu extends JPanel{
     public void FormConnection(){
         //on met image en fond
         try {
-            setImage("src/images/FondAcceuil.png");
+            setImage("D:\\EXO JAVA\\NetflixECE-master\\NetflixECE-master\\ECENetflix\\src\\images/FondAcceuil.png");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }//container qui a une nouvelle couleur
@@ -644,9 +644,9 @@ public class ViewContenu extends JPanel{
         gbc.gridy++;
         gbc.gridwidth = 3;
         container.add(texte, gbc);
-       // setVisible(true);
-    }
 
+
+    }
 
 
     public void CreaCompte(){
@@ -775,6 +775,7 @@ public class ViewContenu extends JPanel{
             public void stateChanged(ChangeEvent e) {
                 ButtonModel model = bconfirm.getModel();
                 //on appuie sur le bouton
+                boolean compteCree = false;
                 if (model.isArmed()) {
                     boolean mdpSaisie=false;
                     //Validation de l'email
@@ -820,7 +821,8 @@ public class ViewContenu extends JPanel{
                     //pour actualiser notre panel
                     updateUI();
                 } else {//relachement
-                    if(var==true){
+                    if(var==true && !compteCree){
+                        compteCree = true; // le compte a été créé
                         try {
                             compte.NouveauCompte( TextEmail.getText(),TextMDP.getText() );
                         } catch (SQLException ex) {

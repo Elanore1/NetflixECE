@@ -73,6 +73,7 @@ public class ControleurCompte {
         String image;
         for(int i=0;i< liste.size( );i++)
         {
+            System.out.println(liste.get( i ) );
             if(i%3==0)
                 mail=liste.get( i );
             else if(i%3==1)
