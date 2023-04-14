@@ -26,12 +26,24 @@ public class ControleurCompte {
         return compte;
     }
 
+    public void UtilisateurChoisi(Utilisateur a)
+    {
+        utilisateur=a;
+    }
+
     public ControleurCompte ()
     {
         this.DAO=new RechercheInfo();
         this.compte=new Compte();
         this.utilisateur=new Utilisateur();
 
+    }
+
+
+    public void ConnexionCompte(String email,String mdp)
+    {
+        compte.setEmail( email );
+        compte.setMdp(mdp);
     }
 
     public void NouveauCompte(String email,String mdp) throws SQLException {
@@ -45,13 +57,40 @@ public class ControleurCompte {
         compte.getUtilisateurs().add( a );
         compte.setUtilisateuractuel( 0 );
         //On ajoute a la base de données le nouveau compte
-        DAO.NouveauCompte( email,mdp,"Utilisateur1");
-
+        DAO.NouveauCompte( email,mdp,"client");
+        DAO.NouveauUtilisateur("Utilisateur1",email,"icone1");
 
         //String requete = "INSERT INTO compte (mail, mdp, utilisateur) VALUES('"+email+"', '"+mdp+"', 'Utilisateur1"+utilisateur+"');";
 
 
     }
+
+    public ArrayList<Utilisateur> RecuperUtilisateurs() throws SQLException {
+        ArrayList<String>liste =DAO.RecupererUtilisateurs( compte.getEmail( ) );
+        ArrayList<Utilisateur>a = new ArrayList<>() ;
+        String mail;
+        String pe = new String(  );
+        String image;
+        for(int i=0;i< liste.size( );i++)
+        {
+            if(i%3==0)
+                mail=liste.get( i );
+            else if(i%3==1)
+                pe= liste.get( i);
+            else if(i%3==2)
+            {
+                image=liste.get( i );
+                Utilisateur e = new Utilisateur(  );
+                e.setPseudo( pe );
+                ImageIcon v = new ImageIcon( "D:\\EXO JAVA\\NetflixECE-master\\NetflixECE-master\\ECENetflix\\src\\images/FondAcceuil.png" );
+                e.setPhotoProfil(v);
+                a.add( e );
+            }
+
+        }
+            return a;
+    }
+
 
 
     public boolean NouveauMail(String mail){

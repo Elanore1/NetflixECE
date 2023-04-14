@@ -38,6 +38,16 @@ public class RechercheInfo {
         }
     }
 
+    public ArrayList<String>RecupererUtilisateurs(String email) throws SQLException {
+        String requete = "SELECT * FROM utilisateur WHERE email='"+email+"');";
+        ArrayList<String>liste;
+        liste=maconnexion.remplirChampsRequete( requete );
+        return liste;
+    }
+
+
+
+
     public void NouveauCompte(String mail,String mdp,String utilisateur) throws SQLException {
 
 
@@ -50,14 +60,13 @@ public class RechercheInfo {
 
     }
 
-    public void NouveauUtilisateur(String pseudo)
-    {
-
+    public void NouveauUtilisateur(String pseudo,String mail,String image) throws SQLException {
+        maconnexion.executeUpdate("INSERT INTO utilisateur (mail,pseudo,image)  VALUES ('"+mail+"','"+pseudo+"','"+image+"');" );
+       // maconnexion.executeUpdate(requete);
     }
 
-    public void changerNomUtilisateur(String mail, String mdp, String Utilisateur)
-    {
-        maconnexion.ajouterRequeteMaj("UPDATE compte SET utilisateur='"+Utilisateur+"' WHERE mail='"+mail+"' AND mdp='"+mdp+"';" );
+    public void changerNomUtilisateur(String mail, String Utilisateur) throws SQLException {
+        maconnexion.executeUpdate("UPDATE compte SET utilisateur='"+Utilisateur+"' WHERE mail='"+mail+"';" );
 
     }
 

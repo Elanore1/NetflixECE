@@ -7,6 +7,7 @@ import javax.swing.plaf.basic.BasicScrollBarUI;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.sql.SQLException;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -64,6 +65,17 @@ public class ViewFenetre extends JFrame{
         panel.updateUI();
         setPanel(panel);
         setVisible(true);
+    }
+    public void ChoixUtilisateur() throws SQLException {
+        this.setLayout( null );
+        barmenu.removeAll();
+        barmenu.setBarreVide();
+        panel.removeAll();
+        panel.ChoixUtilisateurs();
+        panel.updateUI();
+        panel.setVisible( true );
+        setPanel( panel );
+        setVisible( true );
     }
     public void Acceuil(){
         this.setLayout(new GridBagLayout());

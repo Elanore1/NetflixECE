@@ -4,6 +4,8 @@ import controleur.ControleurCompte;
 import controleur.FenetreControleur;
 import controleur.RechercheInfo;
 import modele.Film;
+import modele.Utilisateur;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -593,9 +595,58 @@ public class ViewContenu extends JPanel{
         add(scrollPane, BorderLayout.CENTER);
         updateUI();
     }
-    public void ChoixUtilisateurs(){
+    public void ChoixUtilisateurs() throws SQLException {
+        try {
+            setImage("D:\\EXO JAVA\\NetflixECE-master\\NetflixECE-master\\ECENetflix\\src\\images/FondAcceuil.png");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
+        ArrayList<Utilisateur> utilisateur;
+        utilisateur = compte.RecuperUtilisateurs();
+
+        JPanel container = new JPanel(new GridBagLayout());
+        container.setPreferredSize(new Dimension(600, 500));
+        container.setBackground(new Color(0, 0, 0, 150));
+
+        JLabel texte = new JLabel("Choisir un utilisateur");
+        texte.setPreferredSize(new Dimension(400, 60));
+        texte.setFont(new Font("Arial", Font.BOLD, 20));
+        texte.setForeground(Color.WHITE);
+        texte.setHorizontalAlignment(JLabel.CENTER);
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(20, 20, 20, 20);
+
+        for (int i = 0; i < utilisateur.size(); i++) {
+            Utilisateur u = utilisateur.get(i);
+            JLabel pseudo = new JLabel(u.getPseudo(), u.getPhotoProfil(), JLabel.CENTER);
+            pseudo.setVerticalTextPosition(JLabel.BOTTOM);
+            pseudo.setHorizontalTextPosition(JLabel.CENTER);
+            pseudo.setForeground(Color.WHITE);
+            pseudo.setFont(new Font("Arial", Font.BOLD, 14));
+            pseudo.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    compte.UtilisateurChoisi(u);
+                }
+            });
+            if (i % 3 == 0) {
+                gbc.gridx = 0;
+                gbc.gridy = i / 3;
+            } else {
+                gbc.gridx++;
+            }
+            container.add(pseudo, gbc);
+        }
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.gridwidth = 3;
+        container.add(texte, gbc);
+       // setVisible(true);
     }
+
 
 
     public void CreaCompte(){
