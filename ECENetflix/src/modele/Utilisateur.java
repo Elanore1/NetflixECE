@@ -29,4 +29,8 @@ public class Utilisateur {//un compte netflix repertorie plusieurs utilisateurs
     public  void setPhotoProfil(ImageIcon _photoProfil){this.photoProfil = _photoProfil;}
     public void setMaListe(ArrayList<Film> _maListe){ this.maListe = (ArrayList<Film>)_maListe.clone();}
     public void setParametre(ArrayList<String> _parametre){this.parametre = (ArrayList<String>)_parametre.clone();}
+    public void ajouterMaliste(Film film){
+        maListe.add(film);
+    }
 }
+

@@ -1,19 +1,18 @@
 package controleur;
-
 import modele.Film;
 import modele.NetflixBDD;
-
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class RechercheInfo {
     private ConnexionDB maconnexion;
     private final java.awt.List listeDeTables;
     private final java.awt.List listeDeRequetes;
+    ArrayList<Film> Recherche;
 
     public RechercheInfo(){
         super();
+        Recherche = new ArrayList<Film>();
         try {
             try {
                 // tentative de connexion si les 4 attributs sont remplis
@@ -32,9 +31,7 @@ public class RechercheInfo {
         //on ajoute nos tables
         remplirTables();
         listeDeTables.select(0);
-
     }
-
     public void afficherTables() {
         for (String table : maconnexion.tables) {
             listeDeTables.add(table);
@@ -86,6 +83,62 @@ public class RechercheInfo {
         else
             return null;
     }
+    public ArrayList<Film> rechercheFilm(String tape){
+        boolean dejaLA=false;
+        ArrayList<String> lst = new ArrayList<String>();
+        ArrayList<Film> films = new ArrayList<Film>();
+        ArrayList<Film> requete = new ArrayList<Film>();
+        ArrayList<String> genre = new ArrayList<String>();
+        ArrayList<String> acteurs = new ArrayList<String>();
+        for(int ind=0;ind<25;ind++){
+            String req = "SELECT * FROM film WHERE LOCATE('"+tape+"',titre,"+ind+") OR titre='"+tape+"' OR LOCATE('"+tape+"', genre,"+ind+") OR genre='"+tape+"' OR LOCATE('"+tape+"', liste_type,"+ind+") OR liste_type='"+tape+"' OR LOCATE('"+tape+"', acteurs,"+ind+") OR acteurs='"+tape+"' OR LOCATE('"+tape+"', realisateur,"+ind+") OR realisateur='"+tape+"';";
+            System.out.println(req);
+            String[] act,gen,rep;
+            try {
+                lst = maconnexion.remplirChampsRequete(req);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            for(int a=0;a<lst.size();a++){
+                rep = lst.get(a).split(",");
+                for(int i=0;i<rep.length;i++){
+                    Film nv =  new Film();
+                    nv.setTitre(rep[i]);
+                    nv.setRealisateur(rep[i+1]);
+                    act = rep[i+2].split("\\|");
+                    for(int j=0;j<act.length;j++){
+                        acteurs.add(act[j]);
+                    }
+                    nv.setActeurs(acteurs);
+                    acteurs.clear();
+                    gen = rep[i+3].split("\\|");
+                    for(int j=0;j<gen.length;j++){
+                        genre.add(gen[j]);
+                    }
+                    nv.setGenre(genre);
+                    genre.clear();
+                    nv.setUrlAffiche(rep[i+4]);
+                    nv.setUrlAfficheHor(rep[i+5]);
+                    nv.setUrlfilm(rep[i+6]);
+                    nv.setDescription(rep[i+7]);
+                    nv.setDuree(rep[i+8]);
+                    String temp = rep[i + 9].replaceAll("\\n+","");
+                    for(Film elem : films){
+                        if(nv.getTitre().equals(elem.getTitre())){
+                            dejaLA=true;
+                        }
+                        System.out.println(dejaLA);
+                    }
+                    if(!dejaLA){
+                        films.add(nv);
+                    }
+                    i+=10;
+                    dejaLA=false;
+                }
+            }
+        }
+        return films;
+    }
     public ArrayList<String> afficherRes(String requeteSelectionnee) throws SQLException {
         ArrayList<String> liste = null;
         try {
@@ -106,6 +159,7 @@ public class RechercheInfo {
         maconnexion.ajouterTable("compte");
         maconnexion.ajouterTable("film");
         maconnexion.ajouterTable("utilisateur");
+        maconnexion.ajouterTable("maliste");
     }
     public NetflixBDD chargerFilm() throws SQLException {
         NetflixBDD BDDFilm = new NetflixBDD();
@@ -121,6 +175,7 @@ public class RechercheInfo {
         String reqMDP ="SELECT * FROM film;";
         liste = maconnexion.remplirChampsRequete(reqMDP);
         for(int a=0;a<liste.size();a++){
+            System.out.println(liste.get(a));
             rep = liste.get(a).split(",");
             for(int i=0;i<rep.length;i++){
                 Film nv =  new Film();
@@ -158,7 +213,6 @@ public class RechercheInfo {
                 i+=10;
             }
         }
-
         BDDFilm.setFilms(_film);
         BDDFilm.setNouveaute(_nouveaute);
         BDDFilm.setSerie(_serie);
@@ -177,57 +231,36 @@ public class RechercheInfo {
     public void NouveauUtilisateur(String pseudo,String mail,String image) throws SQLException {
         maconnexion.executeUpdate("INSERT INTO utilisateur(mail,pseudo,image)  VALUES ('"+mail+"','"+pseudo+"','"+image+"');" );
     }
-    public ArrayList<String> RecupererUtilisateurs(String email) throws SQLException {
-        String requete = "SELECT * FROM utilisateur WHERE mail LIKE '"+email+"';";
-        System.out.println("requete: "+requete);
-        ArrayList<String> liste = new ArrayList<String>();
-        maconnexion.ajouterRequete(requete);
-        liste=(ArrayList<String>)maconnexion.remplirChampsRequete(requete).clone();
+    //Pour modifier l'utilisateur dans la BDD
+    public void ModifUtilisateur(String mail,String pseudo,String image,String ancien_pseudo) throws SQLException {
+        maconnexion.executeUpdate("UPDATE utilisateur SET pseudo='"+pseudo+"', image='"+image+"' WHERE mail ='"+mail+"'and pseudo='"+ancien_pseudo+"';");
+    }
+    public void supprimerUtilisateur(String mail,String pseudo)throws SQLException{
+        maconnexion.executeUpdate("DELETE FROM utilisateur where pseudo='"+pseudo+"'and mail='"+mail+"';");
+    }
+    public ArrayList<String>RecupererUtilisateurs(String email) throws SQLException {
+        String requete = "SELECT * FROM utilisateur WHERE mail='"+email+"';";
+        ArrayList<String>liste=new ArrayList<>();
+        liste=maconnexion.recupererDonnees(requete);
         return liste;
     }
-    void lectureDAO(){
-        try {
-            try {
-                // tentative de connexion si les 4 attributs sont remplis
-                //maconnexion = new Connexion("jps", "root", "");
-                maconnexion = new ConnexionDB("projetinfo", "root", "root");
-
-                // effacer les listes de tables et de requêtes
-                listeDeTables.removeAll();
-                listeDeRequetes.removeAll();
-
-                remplirTables();
-
-                // afficher la liste de tables et des requetes
-                afficherTables();
-
-                // se positionner sur la première table et requête de selection
-                listeDeTables.select(0);
-
-                // afficher les champs de la table sélectionnée
-                String nomTable = listeDeTables.getSelectedItem();
-
-                // recuperer les lignes de la table selectionnee
-                afficherLignes(nomTable);
-
-                Scanner sc =new Scanner(System.in);
-                System.out.println("Saisir email");
-                String email = sc.nextLine();
-                String mdpVerif =verifMDP(email);
-                System.out.println("bon mdp :"+mdpVerif);
-                System.out.println("Saisir mdp");
-                String mdp = sc.nextLine();
-                if(mdp==mdpVerif)
-                    System.out.println("Mot de passe est bon");
-
-            } catch (ClassNotFoundException cnfe) {
-                System.out.println("Connexion echouee : probleme de classe");
-                cnfe.printStackTrace();
-            }
-        } catch (SQLException e) {
-            System.out.println("Connexion echouee : probleme SQL");
-            e.printStackTrace();
-        }
+    public ArrayList<Film> getRecherche() {
+        return Recherche;
     }
-
+    public void setRecherche(ArrayList<Film> recherche) {
+        Recherche = recherche;
+    }
+    public ArrayList<String> RecupererListe(String email,String pseudo) throws SQLException {
+        String requete = "SELECT * FROM maliste WHERE mail='"+email+"'AND pseudo='"+pseudo+"';";
+        ArrayList<String>liste=new ArrayList<>();
+        liste=maconnexion.recupererDonnees(requete);
+        System.out.println(liste);
+        return liste;
+    }
+    public void supprimerMaliste(String mail,String pseudo,String film)throws SQLException{
+        maconnexion.executeUpdate("DELETE FROM maliste where pseudo='"+pseudo+"'and mail='"+mail+"'and film_titre='"+film+"';");
+    }
+    public void AjoutMaliste(String mail,String pseudo,String film) throws SQLException {
+        maconnexion.executeUpdate("INSERT INTO maliste(mail,pseudo,film_titre) VALUES ('"+mail+"','"+pseudo+"','"+film+"');" );
+    }
 }

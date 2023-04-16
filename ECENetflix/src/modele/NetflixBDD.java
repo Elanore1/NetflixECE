@@ -45,4 +45,8 @@ public class NetflixBDD { //stockage des films dans la base de données
     public ArrayList<Integer> getMalisteInt(){
         return malisteInt;
     }
+    //position pour film serie etc.. et val pour la valeur
+    public void setMalisteInt(int pos, int val){
+        malisteInt.set(pos,val);
+    }
 }

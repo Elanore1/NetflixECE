@@ -68,12 +68,11 @@ public class ViewFenetre extends JFrame{
 
     }
     public void ChoixUtilisateur() throws SQLException{
-        System.out.println("chlix utilisateur");
         this.setLayout(null);
         panel.removeAll();
         panel.ChoixUtilisateurs();
         panel.updateUI();
-        panel.setVisible( true );
+        panel.setVisible(true);
         setPanel(panel);
         setVisible(true);
     }
@@ -83,6 +82,42 @@ public class ViewFenetre extends JFrame{
         panel.Acceuil();
         panel.updateUI();
         panel.setVisible(true);
+        setPanel(panel);
+        setVisible(true);
+    }
+    public void Recherche(){
+        this.setLayout(null);
+        panel.setLayout(null);
+        panel.removeAll();
+        panel.recherche();
+        panel.updateUI();
+        setPanel(panel);
+        setVisible(true);
+    }
+    public void GestionProfil(){
+        this.setLayout(null);
+        panel.setLayout(null);
+        panel.removeAll();
+        panel.gestionProfil();
+        panel.updateUI();
+        setPanel(panel);
+        setVisible(true);
+    }
+    public void ModifUtilisateur(){
+        this.setLayout(null);
+        panel.setLayout(null);
+        panel.removeAll();
+        panel.ModifUtilisateur();
+        panel.updateUI();
+        setPanel(panel);
+        setVisible(true);
+    }
+    public void NouvelUtilisateur(){
+        this.setLayout(null);
+        panel.setLayout(null);
+        panel.removeAll();
+        panel. AjouterUtilisateur();
+        panel.updateUI();
         setPanel(panel);
         setVisible(true);
     }

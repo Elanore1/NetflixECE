@@ -4,6 +4,7 @@ import controleur.FenetreControleur;
 import modele.BarreMenu;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Objects;
@@ -35,14 +36,15 @@ public class ViewBarreMenu extends JMenuBar {
         add(vide);
     }
     public void setBarreVide(){
-        removeAll();
+        setBackground(Color.BLACK);//couleur de fond noir
+        setBorderPainted(true);//colorie la bordure
         icone.removeAll();
+        recherche.removeAll();
         setBackground(Color.BLACK);//couleur de fond noir
         setBorderPainted(true);//colorie la bordure
         JMenu logo = new JMenu("");//logo au debut de la barre de menu
         logo.setIcon(new ImageIcon( "src/images/logo1.png"));
         logo.disable();//pour ne pas pouvoir selectionner
-
     }
     //Une fois que l'utilisateur est connécté on montre la barre de menu d'acceuil
     public void setBarreConnection(){
@@ -59,61 +61,58 @@ public class ViewBarreMenu extends JMenuBar {
         add(vide);
         add(logo);
         add(vide);
-        JMenu vide1 = new JMenu("                    ");
         JMenu vide2 = new JMenu("                       ");
         vide2.disable();
         vide.disable();//pour ne pas pouvoir selectionner
         JMenu LogoRecherche = new JMenu("");
-        icone.setIcon(new ImageIcon( "src/images/icone1.png"));
+        icone.setIcon(controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getPhotoProfil());
         LogoRecherche.setIcon(new ImageIcon( "src/images/recherche.png"));
         recherche.setMaximumSize(recherche.getPreferredSize());
         recherche.setForeground(Color.white);
         recherche.setBackground(Color.black);
-        recherche.addMouseListener(new MouseListener() {
+        recherche.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
                 //On efface le texte original
                 recherche = ((JTextField)e.getSource());
                 recherche.setText("");
                 recherche.getFont().deriveFont(Font.PLAIN);
                 recherche.setForeground(Color.white);
             }
+
             @Override
-            public void mousePressed(MouseEvent e) {}
-            @Override
-            public void mouseReleased(MouseEvent e){}
-            @Override
-            public void mouseEntered(MouseEvent e){}
-            @Override
-            public void mouseExited(MouseEvent e) {}
+            public void mouseExited(MouseEvent e) {
+                super.mouseExited(e);
+                if(recherche.getText().equals(""))
+                    recherche.setText(" Titres, personnes, genres ");
+            }
         });
         //on créé les boutons et des MouseListeners
         MouseListener ListenerMenu = new MouseListener() {
-            boolean clickR = false;
-            public void changeEtat(){
-                if(clickR==false){
-                    //il ne faut pas afficher
-                    recherche.setVisible(true);
-                }else if(clickR==true) {
-                    //il faut afficher
-                    recherche.setVisible(false);
-                    recherche.setText(" Titres, personnes, genres ");
-                }
-            }
             @Override
             public void mouseClicked(MouseEvent e) {
                 JMenu action = (JMenu) e.getSource();
                 action.setSelected(false);
-                if((action != LogoRecherche) && (!Objects.equals(recherche, action))) {
-                    recherche.setVisible(false);
-                }
                 //pour savoir sur quel action on est
                 if(Objects.equals(acceuil,action)){
-                    for(int i=0;i<10;i++){
-                        controleur.getBDD().getTop().get(i).setAffiche(null);
-                    }
-                    menu.setMenuInfo(0);
                     controleur.setAction("Netflix");
+                }else if(Objects.equals(films,action)){
+                    //Film
+                    controleur.getDAO().setRecherche(controleur.getBDD().getFilms());
+                    controleur.setAction("Recherche");
+                }else if(Objects.equals(serie,action)){
+                    //Serie
+                    controleur.getDAO().setRecherche(controleur.getBDD().getSerie());
+                    controleur.setAction("Recherche");
+                }else if(Objects.equals(nouveautés,action)){
+                    //nouveauté
+                    controleur.getDAO().setRecherche(controleur.getBDD().getNouveaute());
+                    controleur.setAction("Recherche");
+                }else if(Objects.equals(maListe,action)){
+                    //maliste
+                    controleur.getDAO().setRecherche(controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getMaListe());
+                    controleur.setAction("Recherche");
                 }
             }
             @Override
@@ -121,10 +120,12 @@ public class ViewBarreMenu extends JMenuBar {
                 JMenu action = (JMenu) e.getSource();
                 action.setSelected(false);
                 if(action==LogoRecherche){
-                    clickR=!clickR;
-                    changeEtat();
+                    //recherche sql des films
+                    System.out.println("Film a recherche");
+                    //On recherche parmi notre base
+                    controleur.getDAO().setRecherche(controleur.getDAO().rechercheFilm(recherche.getText()));
+                    controleur.setAction("Recherche");
                 }
-
             }
             @Override
             public void mouseReleased(MouseEvent e){
@@ -160,10 +161,41 @@ public class ViewBarreMenu extends JMenuBar {
             @Override
             public void mouseClicked(MouseEvent e) {
                 JMenuItem action = (JMenuItem) e.getSource();
-                System.out.println("action : "+action.getText());
-                if(action.getText().equals("  Se déconnecter  "))
-                    controleur.setAction("Acceuil");
                 action.setEnabled(false);
+                System.out.println(action.getText());
+                if(action.getText().equals("  Se déconnecter  ")){
+                    remove(acceuil);
+                    remove(maListe);
+                    remove(films);
+                    remove(serie);
+                    remove(nouveautés);
+                    remove(recherche);
+                    remove(icone);
+                    remove(LogoRecherche);
+                    controleur.setAction("Acceuil");
+                }else if(action.getText().equals("  Aide  ")){
+
+                }else if(action.getText().equals("  Compte  ")){
+                    remove(acceuil);
+                    remove(maListe);
+                    remove(films);
+                    remove(serie);
+                    remove(nouveautés);
+                    remove(recherche);
+                    remove(icone);
+                    remove(LogoRecherche);
+                    controleur.setAction("Gestion Profil");
+                }else if(action.getText().equals("  Paramètres  ")){
+                    remove(acceuil);
+                    remove(maListe);
+                    remove(films);
+                    remove(serie);
+                    remove(nouveautés);
+                    remove(recherche);
+                    remove(icone);
+                    remove(LogoRecherche);
+                    controleur.setAction("Gestion Profil");
+                }
             }
             @Override
             public void mousePressed(MouseEvent e) {

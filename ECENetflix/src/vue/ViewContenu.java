@@ -4,6 +4,7 @@ import controleur.FenetreControleur;
 import controleur.RechercheInfo;
 import modele.Film;
 import modele.Utilisateur;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -29,6 +30,8 @@ public class ViewContenu extends JPanel{
     public boolean var = false;
     JPanel desc  = new JPanel(null);
     JPanel container = new JPanel(null);
+
+    int indImg;
 
     public ViewContenu() { // constructeur par surchargé
         setVisible(true);
@@ -330,6 +333,8 @@ public class ViewContenu extends JPanel{
                                     //Cas Maliste
                                     if(k==0){
                                         //avec controleur compte
+                                        controleur.setFilm(controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getMaListe().get(films.size()-5+controleur.getBDD().getMalisteInt().get(k)+i));
+                                        controleur.setAction("Film");
                                     }else if(k==1){//cas Film
                                         controleur.setFilm(controleur.getBDD().getFilms().get(films.size()-5+controleur.getBDD().getMalisteInt().get(k)+i));
                                         controleur.setAction("Film");
@@ -347,23 +352,27 @@ public class ViewContenu extends JPanel{
                                     System.out.println("film n°"+(controleur.getBDD().getMalisteInt().get(k)-5+i));
                                     if(k==0){
                                         //avec controleur compte
+                                        controleur.setFilm(controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getMaListe().get(controleur.getBDD().getMalisteInt().get(k)-5+i));
+                                        controleur.setAction("Film");
                                     }else if(k==1){//cas Film
-                                        controleur.setFilm(controleur.getBDD().getFilms().get(films.size()-5+controleur.getBDD().getMalisteInt().get(k)+i));
+                                        controleur.setFilm(controleur.getBDD().getFilms().get(controleur.getBDD().getMalisteInt().get(k)-5+i));
                                         controleur.setAction("Film");
                                     }else if(k==2){//cas serie
-                                        controleur.setFilm(controleur.getBDD().getSerie().get(films.size()-5+controleur.getBDD().getMalisteInt().get(k)+i));
+                                        controleur.setFilm(controleur.getBDD().getSerie().get(controleur.getBDD().getMalisteInt().get(k)-5+i));
                                         controleur.setAction("Film");
                                     }else if(k==3){//cas nouveauté
-                                        controleur.setFilm(controleur.getBDD().getNouveaute().get(films.size()-5+controleur.getBDD().getMalisteInt().get(k)+i));
+                                        controleur.setFilm(controleur.getBDD().getNouveaute().get(controleur.getBDD().getMalisteInt().get(k)-5+i));
                                         controleur.setAction("Film");
                                     }else if(k==4){//cas anime
-                                        controleur.setFilm(controleur.getBDD().getAnime().get(films.size()-5+controleur.getBDD().getMalisteInt().get(k)+i));
+                                        controleur.setFilm(controleur.getBDD().getAnime().get(controleur.getBDD().getMalisteInt().get(k)-5+i));
                                         controleur.setAction("Film");
                                     }
                                 }else{
                                     System.out.println("film n°"+(controleur.getBDD().getMalisteInt().get(k)+5+i));
                                     if(k==0){
                                         //avec controleur compte
+                                        controleur.setFilm(controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getMaListe().get(controleur.getBDD().getMalisteInt().get(k)+5+i));
+                                        controleur.setAction("Film");
                                     }else if(k==1){//cas Film
                                         controleur.setFilm(controleur.getBDD().getFilms().get(controleur.getBDD().getMalisteInt().get(k)+5+i));
                                         controleur.setAction("Film");
@@ -619,12 +628,6 @@ public class ViewContenu extends JPanel{
                     if(var==true){
                         //pour laisser un temps avant de s connecter
                         controleur.getControleurCompte().setCompte(TextEmail.getText(),TextMDP.getText());
-                        try {
-                            //on attend et on quitte
-                            Thread.sleep(2000);
-                        } catch (InterruptedException ex) {
-                            throw new RuntimeException(ex);
-                        }
                         controleur.setAction("Choix Utilisateurs");
                     }
                 }
@@ -771,29 +774,15 @@ public class ViewContenu extends JPanel{
         add(container,input);
         updateUI();
     }
-
     public void Netflix(){
         container.removeAll();
+        container.setLayout(null);
         desc.removeAll();
-        //On met ca juste pour les test d'affichage
-        ArrayList<Film> listeMesfilms = new ArrayList<Film>();//pour maliste apparition, disparition
-        //listFilm=new ArrayList<Film>();
-        ArrayList<String> test = new ArrayList<String>();
-        test.add("Action");
-        test.add("Fantastique");
-        test.add("S-F");
-        //test affichage
-        for(int i=0;i<13;i++){
-            Film nv = new Film();
-            nv.setUrlAffiche("https://i.pinimg.com/564x/11/1c/5c/111c5c9ad99661af2d80e38948cf29d8.jpg");
-            nv.setUrlAfficheHor("https://i0.wp.com/jasonsmovieblog.com/wp-content/uploads/2014/11/interstellar-2014-movie-poster.jpg?resize=627%2C392&ssl=1");
-            nv.setTitre("Interstellar");
-            nv.setGenre(test);
-            if(i<3)
-                listeMesfilms.add(nv);
-        }
         //Appli Netflix
-        //JPanel container = new JPanel(null);
+        //On set les k a 5  au debut
+        for(int i=0;i<5;i++){
+            controleur.getBDD().setMalisteInt(i,5);
+        }
         container.setBackground(new Color(20,20,20));
         //Top 10
         JLabel top10 = new JLabel(new ImageIcon("src/images/top10.png"),JLabel.CENTER);
@@ -818,29 +807,29 @@ public class ViewContenu extends JPanel{
         gauche.setEnabled(false);
         droite.setVisible(true);
         gauche.setVisible(true);
-        JPanel b1 = bande(listeMesfilms,"Ma Liste",0);
+        JPanel b1 = bande(controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getMaListe(),"Ma Liste",0);
         JPanel b2 = bande(controleur.getBDD().getFilms(),"Films",1);
         JPanel b3 = bande(controleur.getBDD().getSerie(),"Séries",2);
         JPanel b4 = bande(controleur.getBDD().getNouveaute(),"Nouveautés",3);
         JPanel b5 = bande(controleur.getBDD().getAnime(),"Animés",4);
-        System.out.println(listeMesfilms.size());
-        if(listeMesfilms.size()==0){
+        //Si Maliste de l'utilisateur est vide
+        if(controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getMaListe().size()==0){
             container.setSize(2050,1750);
-            container.setPreferredSize(container.getPreferredSize());
+            container.setPreferredSize(container.getSize());
             b2.setBounds(0,330,1200,340);
             b3.setBounds(0,665,1200,340);
             b4.setBounds(0,1000,1200,340);
             b5.setBounds(0,1335,1200,340);
         }else{
             container.setSize(2050,2050);
-            container.setPreferredSize(container.getPreferredSize());
+            container.setPreferredSize(container.getSize());
             b1.setBounds(0,330,1200,340);
             b2.setBounds(0,665,1200,340);
             b3.setBounds(0,1000,1200,340);
             b4.setBounds(0,1335,1200,340);
             b5.setBounds(0,1670,1200,340);
         }
-        droite.addMouseListener(new MouseListener() {
+        droite.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e){
                 droite.setBackground(new Color(0,0,0,150));
@@ -855,30 +844,10 @@ public class ViewContenu extends JPanel{
                     droite.setBounds(1121,0,50,200);
                     gauche.setBounds(0,0,50,200);
                 }
-                updateUI();
-            }
-            @Override
-            public void mousePressed(MouseEvent e){
-                droite.setBackground(new Color(0,0,0,150));
-                updateUI();
-            }
-            @Override
-            public void mouseReleased(MouseEvent e){
-                droite.setBackground(new Color(0,0,0,150));
-                updateUI();
-            }
-            @Override
-            public void mouseEntered(MouseEvent e){
-                droite.setBackground(new Color(0,0,0,150));
-                updateUI();
-            }
-            @Override
-            public void mouseExited(MouseEvent e) {
-                droite.setBackground(new Color(0,0,0,150));
                 updateUI();
             }
         });
-        gauche.addMouseListener(new MouseListener() {
+        gauche.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e){
                 gauche.setBackground(new Color(0,0,0,150));
@@ -893,26 +862,6 @@ public class ViewContenu extends JPanel{
                     droite.setBounds(1121,0,50,200);
                     gauche.setBounds(0,0,50,200);
                 }
-                updateUI();
-            }
-            @Override
-            public void mousePressed(MouseEvent e){
-                gauche.setBackground(new Color(0,0,0,150));
-                updateUI();
-            }
-            @Override
-            public void mouseReleased(MouseEvent e){
-                gauche.setBackground(new Color(0,0,0,150));
-                updateUI();
-            }
-            @Override
-            public void mouseEntered(MouseEvent e){
-                gauche.setBackground(new Color(0,0,0,150));
-                updateUI();
-            }
-            @Override
-            public void mouseExited(MouseEvent e) {
-                gauche.setBackground(new Color(0,0,0,150));
                 updateUI();
             }
         });
@@ -996,12 +945,12 @@ public class ViewContenu extends JPanel{
                                 }
                                 desc = description(controleur.getBDD().getTop().get(i),i);
 
-                                if(listeMesfilms.size()==0)
+                                if(controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getMaListe().size()==0)
                                     container.remove(b2);
                                 else
                                     container.remove(b1);
                                 container.add(desc);
-                                if(listeMesfilms.size()==0)
+                                if(controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getMaListe().size()==0)
                                     container.add(b2);
                                 else
                                     container.add(b1);
@@ -1049,12 +998,11 @@ public class ViewContenu extends JPanel{
         container.add(b4);
         container.add(b3);
         container.add(b2);
-        if(listeMesfilms.size()>0)
+        if(controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getMaListe().size()>0)
             container.add(b1);
         //on définie les barres en noir
         JScrollPane scrollPane = new JScrollPane(container);
         scrollPane.getVerticalScrollBar().setBackground(Color.BLACK);
-        scrollPane.getHorizontalScrollBar();
         scrollPane.setBounds(0,0,1190,713);
         scrollPane.getVerticalScrollBar().setUI(new BasicScrollBarUI() {
             @Override
@@ -1065,64 +1013,209 @@ public class ViewContenu extends JPanel{
                 thumbColor = new Color(20,20,20);
             }
         });
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         scrollPane.setHorizontalScrollBar(null);
         add(scrollPane, BorderLayout.CENTER);
         updateUI();
         setVisible(true);
     }
     public void ChoixUtilisateurs() throws SQLException {
-
-        ArrayList<Utilisateur> utilisateur;
-        utilisateur = controleur.getControleurCompte().RecuperUtilisateurs();
-
-        // System.out.println( utilisateur.size() );
-        for(int i =0;i<utilisateur.size();i++)
-        {
-            System.out.println(   utilisateur.get( i ).getPseudo());
-        }
-
-        JPanel container = new JPanel(new GridBagLayout());
-        container.setPreferredSize(new Dimension(600, 500));
-        container.setBackground(new Color(0, 0, 0, 150));
-
-        JLabel texte = new JLabel("Choisir un utilisateur");
-        texte.setPreferredSize(new Dimension(400, 60));
-        texte.setFont(new Font("Arial", Font.BOLD, 20));
-        texte.setForeground(Color.WHITE);
-        texte.setHorizontalAlignment(JLabel.CENTER);
-        texte.setBounds(10,15,400,60);
-
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(20, 20, 20, 20);
-
-        for (int i = 0; i < utilisateur.size(); i++) {
-            Utilisateur u = utilisateur.get(i);
-            JLabel pseudo = new JLabel(u.getPseudo(), u.getPhotoProfil(), JLabel.CENTER);
-            pseudo.setVerticalTextPosition(JLabel.BOTTOM);
-            pseudo.setHorizontalTextPosition(JLabel.CENTER);
-            pseudo.setForeground(Color.WHITE);
-            pseudo.setFont(new Font("Arial", Font.BOLD, 14));
-            pseudo.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    controleur.getControleurCompte().UtilisateurChoisi(u);
-                }
-            });
-            if (i % 3 == 0) {
-                gbc.gridx = 0;
-                gbc.gridy = i / 3;
-            } else {
-                gbc.gridx++;
+        container.removeAll();
+        //on apelle le ss programme qui recup utilisateur dans BDD
+        controleur.getControleurCompte().RecuperUtilisateurs();
+        MouseAdapter test;
+        test = new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                controleur.setAction("Ajouter Utilisateur");
             }
-            container.add(pseudo, gbc);
+        };
+        container.setBackground(new Color(20,20,20));
+        JLabel titre = new JLabel("Qui est-ce ?",JLabel.CENTER);
+        titre.setFont(new Font("Arial",Font.BOLD, 30));
+        titre.setForeground(Color.white);
+        titre.setBounds(490,170,200,40);
+        for(int i=0;i<controleur.getControleurCompte().getCompte().getUtilisateurs().size();i++){
+            if(controleur.getControleurCompte().getCompte().getUtilisateurs().size()==3){
+                JButton icone = new JButton(new ImageIcon(controleur.getControleurCompte().getCompte().getUtilisateurs().get(i).getPhotoProfil().getImage().getScaledInstance(150, 150, Image.SCALE_DEFAULT)));
+                icone.setBounds(150+250*i,250,150,150);
+                JLabel pseudo = new JLabel(controleur.getControleurCompte().getCompte().getUtilisateurs().get(i).getPseudo());
+                pseudo.setBounds(160+250*i,360,150,150);
+                pseudo.setForeground(Color.white);
+                pseudo.setFont(new Font("Arial",Font.PLAIN, 25));
+                int finalI = i;
+                icone.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        super.mouseClicked(e);
+                        controleur.getControleurCompte().getCompte().setUtilisateuractuel(finalI);
+                        ArrayList<String> lst;
+                        try {
+                            lst = controleur.getDAO().RecupererListe(controleur.getControleurCompte().getCompte().getEmail(),controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getPseudo());
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).setMaListe(controleur.remplirFilm(lst));
+                        controleur.setAction("Netflix");
+                        System.out.println("Utilisateur"+finalI);
+                    }
+                });
+                container.add(icone);
+                container.add(pseudo);
+                if(i == controleur.getControleurCompte().getCompte().getUtilisateurs().size() - 1){
+                    JButton add = new JButton(new ImageIcon("src/images/Ajout.png"));
+                    add.setBackground(new Color(20,20,20));
+                    add.setBorderPainted(false);
+                    add.setSelected(false);
+                    add.setBounds(150+250*(i+1),250,150,150);
+                    add.addMouseListener(test);
+                    JLabel ajout = new JLabel("Nouvel Utilisateur");
+                    ajout.setBounds(150+250*(i+1),360,250,150);
+                    ajout.setForeground(Color.white);
+                    ajout.setFont(new Font("Arial",Font.PLAIN, 25));
+                    container.add(add);
+                    container.add(ajout);
+                }
+            }else if((controleur.getControleurCompte().getCompte().getUtilisateurs().size() == 4) || (controleur.getControleurCompte().getCompte().getUtilisateurs().size() == 5)){
+                JButton icone = new JButton(new ImageIcon(controleur.getControleurCompte().getCompte().getUtilisateurs().get(i).getPhotoProfil().getImage().getScaledInstance(120, 120, Image.SCALE_DEFAULT)));
+                icone.setBounds(90+210*i,250,120,120);
+                JLabel pseudo = new JLabel(controleur.getControleurCompte().getCompte().getUtilisateurs().get(i).getPseudo());
+                pseudo.setBounds(92+210*i,340,150,150);
+                pseudo.setForeground(Color.white);
+                pseudo.setFont(new Font("Arial",Font.PLAIN, 25));
+                int finalI = i;
+                icone.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        super.mouseClicked(e);
+                        controleur.getControleurCompte().getCompte().setUtilisateuractuel(finalI);
+                        ArrayList<String> lst;
+                        try {
+                            lst = controleur.getDAO().RecupererListe(controleur.getControleurCompte().getCompte().getEmail(),controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getPseudo());
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).setMaListe(controleur.remplirFilm(lst));
+                        controleur.setAction("Netflix");
+                        System.out.println("Utilisateur"+finalI);
+                    }
+                });
+                container.add(icone);
+                container.add(pseudo);
+                if(i == controleur.getControleurCompte().getCompte().getUtilisateurs().size()-1 && controleur.getControleurCompte().getCompte().getUtilisateurs().size() == 4){
+                    JButton add = new JButton(new ImageIcon("src/images/Ajout.png"));
+                    add.setBackground(new Color(20,20,20));
+                    add.setBorderPainted(false);
+                    add.setSelected(false);
+                    add.setBounds(90+210*(i+1),245,150,150);
+                    add.addMouseListener(test);
+                    JLabel ajout = new JLabel("Nouvel Utilisateur");
+                    ajout.setBounds(90+210*(i+1),340,250,150);
+                    ajout.setForeground(Color.white);
+                    ajout.setFont(new Font("Arial",Font.PLAIN, 25));
+                    container.add(add);
+                    container.add(ajout);
+                }
+            }else if(controleur.getControleurCompte().getCompte().getUtilisateurs().size()==2){
+                JButton icone = new JButton(new ImageIcon(controleur.getControleurCompte().getCompte().getUtilisateurs().get(i).getPhotoProfil().getImage().getScaledInstance(150, 150, Image.SCALE_DEFAULT)));
+                icone.setBounds(260+250*i,250,150,150);
+                int finalI = i;
+                icone.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        super.mouseClicked(e);
+                        controleur.getControleurCompte().getCompte().setUtilisateuractuel(finalI);
+                        ArrayList<String> lst;
+                        try {
+                            lst = controleur.getDAO().RecupererListe(controleur.getControleurCompte().getCompte().getEmail(),controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getPseudo());
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).setMaListe(controleur.remplirFilm(lst));
+                        controleur.setAction("Netflix");
+                        System.out.println("Utilisateur"+finalI);
+                    }
+                });
+                JLabel pseudo = new JLabel(controleur.getControleurCompte().getCompte().getUtilisateurs().get(i).getPseudo());
+                pseudo.setBounds(270+250*i,360,150,150);
+                pseudo.setForeground(Color.white);
+                pseudo.setFont(new Font("Arial",Font.PLAIN, 25));
+                container.add(icone);
+                container.add(pseudo);
+                if(i == controleur.getControleurCompte().getCompte().getUtilisateurs().size() - 1){
+                    JButton add = new JButton(new ImageIcon("src/images/Ajout.png"));
+                    add.setBackground(new Color(20,20,20));
+                    add.setBorderPainted(false);
+                    add.setSelected(false);
+                    add.addMouseListener(test);
+                    add.setBounds(260+250*(i+1),250,150,150);
+                    JLabel ajout = new JLabel("Nouvel Utilisateur");
+                    ajout.setBounds(260+250*(i+1),360,250,150);
+                    ajout.setForeground(Color.white);
+                    ajout.setFont(new Font("Arial",Font.PLAIN, 25));
+                    container.add(add);
+                    container.add(ajout);
+                }
+            }else{
+                JButton icone = new JButton(new ImageIcon(controleur.getControleurCompte().getCompte().getUtilisateurs().get(i).getPhotoProfil().getImage().getScaledInstance(150, 150, Image.SCALE_DEFAULT)));
+                icone.setBounds(360+250*i,250,150,150);
+                JLabel pseudo = new JLabel(controleur.getControleurCompte().getCompte().getUtilisateurs().get(i).getPseudo());
+                int finalI = i;
+                icone.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        super.mouseClicked(e);
+                        controleur.getControleurCompte().getCompte().setUtilisateuractuel(finalI);
+                        ArrayList<String> lst;
+                        try {
+                            lst = controleur.getDAO().RecupererListe(controleur.getControleurCompte().getCompte().getEmail(),controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getPseudo());
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).setMaListe(controleur.remplirFilm(lst));
+                        controleur.setAction("Netflix");
+                        System.out.println("Utilisateur"+ finalI);
+                    }
+                });
+                pseudo.setBounds(370+250*i,360,150,150);
+                pseudo.setForeground(Color.white);
+                pseudo.setFont(new Font("Arial",Font.PLAIN, 25));
+                container.add(icone);
+                container.add(pseudo);
+                if(i == controleur.getControleurCompte().getCompte().getUtilisateurs().size() - 1){
+                    JButton add = new JButton(new ImageIcon("src/images/Ajout.png"));
+                    add.setBackground(new Color(20,20,20));
+                    add.setBorderPainted(false);
+                    add.setSelected(false);
+                    add.addMouseListener(test);
+                    add.setBounds(360+250*(i+1),250,150,150);
+                    JLabel ajout = new JLabel("Nouvel Utilisateur");
+                    ajout.setBounds(360+250*(i+1),360,250,150);
+                    ajout.setForeground(Color.white);
+                    ajout.setFont(new Font("Arial",Font.PLAIN, 25));
+                    container.add(add);
+                    container.add(ajout);
+                }
+            }
         }
-
-        gbc.gridx = 0;
-        gbc.gridy++;
-        gbc.gridwidth = 3;
-        container.add(texte, gbc);
+        JButton manageCompte = new JButton("Gérer les profils");
+        manageCompte.setBounds(490,560,200,70);
+        manageCompte.setBackground(new Color(1,113,121));
+        manageCompte.setForeground(Color.white);
+        manageCompte.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                controleur.setAction("Gestion Profil");
+            }
+        });
+        container.add(manageCompte);
+        container.add(titre);
+        container.setSize(1200,800);
+        container.setPreferredSize(container.getPreferredSize());
+        add(container,BorderLayout.CENTER);
         updateUI();
-
+        setVisible(true);
     }
     public void CreaCompte() {
         ///creation d'un compte
@@ -1132,10 +1225,10 @@ public class ViewContenu extends JPanel{
         } catch (IOException e) {
             throw new RuntimeException(e);
         }//container qui a une nouvelle couleur
-        JPanel container = new JPanel();
-        container.setPreferredSize(new Dimension(450,500));
-        container.setBackground(new Color(0,0,0,150));
-        container.setLayout(new GridBagLayout());
+        JPanel contener = new JPanel();
+        contener.setPreferredSize(new Dimension(450,500));
+        contener.setBackground(new Color(0,0,0,150));
+        contener.setLayout(new GridBagLayout());
         JLabel ident = new JLabel("Créer un Nouveau Compte");
         JLabel mail = new JLabel("Saisir une adresse mail");
         JLabel mdp = new JLabel("Saisir un mot de passe");
@@ -1241,19 +1334,13 @@ public class ViewContenu extends JPanel{
                     }
                     //pour actualiser notre panel
                     updateUI();
-                } else {//relachement
+                }else{//relachement
                     if(var==true){
                         try {
                             controleur.getControleurCompte().NouveauCompte(TextEmail.getText(),TextMDP.getText());
                         }catch (SQLException ex) {
                             throw new RuntimeException( ex );
-                        }//pour laisser un temps avant de s connecter
-                        /*try {
-                            //on attend et on quitte
-                            Thread.sleep(2000);
-                        } catch (InterruptedException ex) {
-                            throw new RuntimeException(ex);
-                        }*/
+                        }
                         controleur.setAction("Choix Utilisateurs");
                         var=false;
                     }
@@ -1305,60 +1392,69 @@ public class ViewContenu extends JPanel{
         input.anchor = GridBagConstraints.CENTER;
         input.insets = textInsets;
         input.gridy = 0;
-        container.add(ident,input);
+        contener.add(ident,input);
         //positionnement Saisir email
         input.anchor = GridBagConstraints.WEST;
         input.insets = textInsets;
         input.gridy = 1;
-        container.add(mail,input);
+        contener.add(mail,input);
         //positionnement textEmail
         input.anchor = GridBagConstraints.CENTER;
         input.insets = textInsets;
         input.gridy = 2;
-        container.add(TextEmail,input);
+        contener.add(TextEmail,input);
         //positionnement text mauvais email
         input.gridy = 3;
         input.insets = errorInsets;
         input.anchor = GridBagConstraints.WEST;
-        container.add(BadEmail,input);
+        contener.add(BadEmail,input);
         //positionnement Saisir email
         input.anchor = GridBagConstraints.WEST;
         input.insets = textInsets;
         input.gridy = 4;
-        container.add(mdp,input);
+        contener.add(mdp,input);
         //positionnement textMDP
         input.gridy = 5;
         input.insets = textInsets;
         input.anchor = GridBagConstraints.CENTER;
-        container.add(TextMDP,input);
+        contener.add(TextMDP,input);
         //positionnement text mauvais mdp
         input.gridy = 6;
         input.insets = errorInsets;
         input.anchor = GridBagConstraints.WEST;
-        container.add(BadMDP,input);
+        contener.add(BadMDP,input);
         //placement bouton
         input.insets = buttonInsets;
         input.anchor = GridBagConstraints.WEST;
         input.gridx = 0;
         input.gridy = 7;
-        container.add(bconfirm,input);
+        contener.add(bconfirm,input);
         //bouton retour
         input.insets = buttonInsets;
         input.anchor = GridBagConstraints.CENTER;
         input.gridx = 0;
         input.gridy = 8;
-        container.add(bretour,input);
+        contener.add(bretour,input);
         //pour placer le panel transparent (container) sur notre panel avec image en fond
         input.anchor = GridBagConstraints.CENTER;
         input.gridx = 2;
         input.gridy = 5;
-        add(container,input);
+        add(contener,input);
         updateUI();
     }
     public void filmView(Film voir){
+        boolean InListe=false;
         JPanel film = new JPanel(null);
         JLabel note  = new JLabel("Votre Avis :");
         JButton liste = new JButton("Ajouter a ma Liste");
+        for(int i=0;i<controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getMaListe().size();i++){
+            if(controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getMaListe().get(i).getTitre().equals(voir.getTitre())){
+                InListe = true;
+            }
+        }
+        if(InListe==true){
+            liste.setText("Retirer de ma Liste");
+        }
         JLabel desc = new JLabel("Description :");
         JLabel act_ = new JLabel("Acteurs :");
         JLabel real_ = new JLabel("Realisateur :");
@@ -1380,7 +1476,6 @@ public class ViewContenu extends JPanel{
             genre+=" ";
         }
         JLabel info = new JLabel("Genre : "+genre +" durée : "+ voir.getDuree()+"  "+voir.getAge()+"+ ");
-        System.out.println(info.getText());
         JTextArea act = new JTextArea(temp);
         desc_.setForeground(Color.white);
         act.setForeground(Color.white);
@@ -1392,7 +1487,7 @@ public class ViewContenu extends JPanel{
         real.setFont(new Font("Arial",Font.PLAIN, 15));
         act.setFont(new Font("Arial",Font.PLAIN, 15));
         title.setFont(new Font("Arial",Font.BOLD, 25));
-        info.setFont(new Font("Arial",Font.PLAIN, 18));
+        info.setFont(new Font("Arial",Font.PLAIN, 15));
         title.setForeground(Color.white);
         act_.setForeground(Color.white);
         real_.setForeground(Color.white);
@@ -1567,6 +1662,39 @@ public class ViewContenu extends JPanel{
         liste.setForeground(Color.white);
         liste.setPreferredSize(new Dimension(250,35));
         liste.setFocusPainted(false);
+        liste.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                boolean Dansliste=false;
+                int placement = -1;
+                //On ajoute le film dans la liste si il n'est pas déja dedans
+                for(int i=0;i<controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getMaListe().size();i++){
+                    if(controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getMaListe().get(i).getTitre().equals(voir.getTitre())){
+                        Dansliste = true;
+                        placement = i;
+                    }
+                }
+                if(Dansliste==true){
+                    controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getMaListe().remove(placement);
+                    try {
+                        controleur.getDAO().supprimerMaliste(controleur.getControleurCompte().getCompte().getEmail(),controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getPseudo(),voir.getTitre());
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    liste.setText("Ajouter a ma Liste");
+                }else{
+                    controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).ajouterMaliste(voir);
+                    try {
+                        controleur.getDAO().AjoutMaliste(controleur.getControleurCompte().getCompte().getEmail(),controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getPseudo(),voir.getTitre());
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    liste.setText("Retirer de ma Liste");
+                }
+                updateUI();
+            }
+        });
         title.setBounds(800,55,400,500);
         reco.setBounds(800,87,370,30);
         film.setBackground(new Color(20,20,20));
@@ -1576,11 +1704,11 @@ public class ViewContenu extends JPanel{
         Video test = new Video(voir.getUrlfilm());
         BufferedImage bufimg;
         JLabel image;
-        try {
+        try{
             bufimg = chargerIm(voir.getUrlAfficheHor());
             ImageIcon img = resizeImage(bufimg,730,490);
             image = new JLabel(img);
-        } catch (IOException e) {
+        }catch (IOException e){
             throw new RuntimeException(e);
         }
         image.setBounds(30,50,730,490);
@@ -1603,6 +1731,533 @@ public class ViewContenu extends JPanel{
         film.add(c1);
         add(film);
         updateUI();
+    }
+    public void recherche(){
+        //liste film a afficher
+        container.removeAll();
+        if(controleur.getDAO().getRecherche().size()==0){
+            JLabel text = new JLabel("Pas de Film",JLabel.CENTER);
+            text.setFont(new Font("Arial",Font.BOLD, 35));
+            text.setForeground(Color.white);
+            container.add(text);
+        }
+        int nbRow = controleur.getDAO().getRecherche().size()/5;
+        if(controleur.getDAO().getRecherche().size()%4!=0)
+            nbRow+=1;
+        int nbCol = 4;
+        GridBagConstraints c = new GridBagConstraints();
+        container.setLayout(new GridBagLayout());
+        c.insets = new Insets(10, 5, 10, 5);
+        c.weightx = 1;
+        c.weighty = 1;
+        c.anchor = GridBagConstraints.CENTER;
+        int x = 0;
+        int y = 0;
+        for(int i=0;i<controleur.getDAO().getRecherche().size();i++){
+            BufferedImage buff = null;
+            try {
+                if(x==3)
+                    y+=1;
+                x=i%nbCol;
+                buff = chargerIm(controleur.getDAO().getRecherche().get(i).getUrlAfficheHor());
+                JButton but = new JButton();
+                but.setSize(260,210);
+                but.setPreferredSize(but.getSize());
+                but.setIcon(resizeImage(buff, but.getPreferredSize().width, but.getPreferredSize().height));
+                c.gridx = x;
+                c.gridy = y;
+                int finalI = i;
+                but.addMouseListener(new MouseAdapter() {
+                     @Override
+                     public void mouseClicked(MouseEvent e) {
+                         super.mouseClicked(e);
+                         controleur.setFilm(controleur.getDAO().getRecherche().get(finalI));
+                         controleur.setAction("Film");
+                     }
+                 });
+                        container.add(but, c);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        container.setBackground(new Color(20,20,20));
+        if(nbRow>2)
+            container.setSize(1190,1500);
+        else
+            container.setSize(1190,700);
+        container.setPreferredSize(container.getSize());
+        //container.setBounds(0,0,1190,1500);
+        JScrollPane scrollPane = new JScrollPane(container);
+        scrollPane.getVerticalScrollBar().setBackground(Color.BLACK);
+        scrollPane.setBounds(0,0,1190,700);
+        scrollPane.getVerticalScrollBar().setUI(new BasicScrollBarUI() {
+            @Override
+            protected void configureScrollBarColors() {
+                thumbHighlightColor = new Color(0x8d8d8d);
+                thumbLightShadowColor = new Color(0x8d8d8d);
+                thumbDarkShadowColor = new Color(0x8d8d8d);
+                thumbColor = new Color(20,20,20);
+            }
+        });
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        scrollPane.setHorizontalScrollBar(null);
+        add(scrollPane, BorderLayout.CENTER);
+        updateUI();
+    }
+    public void ModifUtilisateur(){
+        try {
+            controleur.getControleurCompte().RecuperUtilisateurs();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        container.removeAll();
+        container.setBackground(new Color(20,20,20));
+        JLabel titre = new JLabel("Modifier le profil",JLabel.CENTER);
+        titre.setFont(new Font("Arial",Font.BOLD, 40));
+        titre.setForeground(Color.white);
+        titre.setBounds(370,55,400,50);
+        JLabel modif = new JLabel("Choisir une photo de profil",JLabel.CENTER);
+        modif.setFont(new Font("Arial",Font.BOLD, 35));
+        modif.setForeground(Color.white);
+        modif.setBounds(310,285,600,50);
+        JButton img = new JButton(new ImageIcon(controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getPhotoProfil().getImage().getScaledInstance(100, 100, Image.SCALE_DEFAULT)));
+        img.setBounds(390,130,100,100);
+        img.setSelected(false);
+        img.setBorderPainted(false);
+        JTextField pseudo = new JTextField();
+        pseudo.setFont(new Font("Arial",Font.PLAIN, 18));
+        pseudo.setBounds(530,155,260,40);
+        pseudo.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                if(pseudo.isEditable()){
+                    JTextField TextMDP =(JTextField) e.getSource();
+                    TextMDP.setText("");
+                    TextMDP.setForeground(Color.white);
+                }
+            }
+            @Override
+            public void mouseExited(MouseEvent e){
+                super.mouseExited(e);
+                if(pseudo.getText().equals("")){
+                    pseudo.setText(controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getPseudo());
+                }
+            }
+        });
+        pseudo.setText(controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getPseudo());
+        pseudo.setForeground(Color.white);
+        pseudo.setBackground(Color.gray);
+        for(int i=0;i<6;i++){
+            ImageIcon test = new ImageIcon("src/images/icone"+(i+1)+".png");
+            JButton icone = new JButton(new ImageIcon(test.getImage().getScaledInstance(100, 100, Image.SCALE_DEFAULT)));
+            icone.setBounds(50+i*190,370,100,100);
+            int finalI = i;
+            icone.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    indImg= finalI;
+                    //on change la photo de profil
+                    ImageIcon temp = new ImageIcon("src/images/icone"+(indImg+1)+".png");
+                    img.setIcon(new ImageIcon(temp.getImage().getScaledInstance(100, 100, Image.SCALE_DEFAULT)));
+                    updateUI();
+                }
+            });
+            container.add(icone);
+        }
+        JButton enreg = new JButton("Enregistrer");
+        JButton annul = new JButton("Annuler");
+        JButton suppr = new JButton("Supprimer Profil");
+        suppr.setBounds(660,560,200,50);
+        suppr.setBackground(new Color(1,113,121));
+        suppr.setForeground(Color.white);
+        annul.setBounds(500,560,150,50);
+        annul.setBackground(new Color(1,113,121));
+        annul.setForeground(Color.white);
+
+        enreg.setBounds(340,560,150,50);
+        enreg.setBackground(new Color(1,113,121));
+        enreg.setForeground(Color.white);
+        enreg.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e){
+                String image="";
+                //on enregistre
+                if(indImg==0)
+                    image="icone1";
+                else if(indImg==1)
+                    image="icone2";
+                else if(indImg==2)
+                    image="icone3";
+                else if(indImg==3)
+                    image="icone4";
+                else if(indImg==4)
+                    image="icone5";
+                else if(indImg==5)
+                    image="icone5";
+                //Dans la BDD
+                try {
+                    controleur.getDAO().ModifUtilisateur(controleur.getControleurCompte().getCompte().getEmail(),pseudo.getText(),image,controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getPseudo());
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+                //Dans notre controleur
+                controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).setPseudo(pseudo.getText());
+                controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).setPhotoProfil(new ImageIcon("src/images/icone"+(indImg+1)+".png"));
+                controleur.setAction("Gestion Profil");
+            }
+        });
+        annul.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e){
+                //verif on peut suppr et on suppr
+                controleur.setAction("Gestion Profil");
+            }
+        });
+        suppr.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e){
+                //verif on peut suppr et on suppr
+                if(controleur.getControleurCompte().getCompte().getUtilisateurs().size()==1){
+                    //On ne peut pas suprr
+                    suppr.setBackground(Color.red);
+                    suppr.setSelected(false);
+                }else{
+                    //Dans BDD
+                    try {
+                        controleur.getDAO().supprimerUtilisateur(controleur.getControleurCompte().getCompte().getEmail(),controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getPseudo());
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    //Dans Controleur
+                    controleur.getControleurCompte().getCompte().getUtilisateurs().remove(controleur.getControleurCompte().getCompte().getUtilisateuractuel());
+                    controleur.setAction("Choix Utilisateurs");
+                }
+            }
+        });
+        container.add(suppr);
+        container.add(enreg);
+        container.add(annul);
+        container.add(modif);
+        container.add(titre);
+        container.add(pseudo);
+        container.add(img);
+        add(container);
+        updateUI();
+    }
+    public void AjouterUtilisateur(){
+        container.removeAll();
+        container.setBackground(new Color(20,20,20));
+        JLabel titre = new JLabel("Nouvel Utilisateur",JLabel.CENTER);
+        titre.setFont(new Font("Arial",Font.BOLD, 40));
+        titre.setForeground(Color.white);
+        titre.setBounds(377,55,400,50);
+        JLabel modif = new JLabel("Choisir une photo de profil",JLabel.CENTER);
+        modif.setFont(new Font("Arial",Font.BOLD, 35));
+        modif.setForeground(Color.white);
+        modif.setBounds(310,285,600,50);
+        ImageIcon tet = new ImageIcon("src/images/icone1.png");
+        JButton img = new JButton(new ImageIcon(tet.getImage().getScaledInstance(100, 100, Image.SCALE_DEFAULT)));
+        img.setBounds(390,130,100,100);
+        img.setSelected(false);
+        img.setBorderPainted(false);
+        JTextField pseudo = new JTextField();
+        pseudo.setFont(new Font("Arial",Font.PLAIN, 18));
+        pseudo.setBounds(530,155,260,40);
+        pseudo.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                if(pseudo.isEditable()){
+                    JTextField TextMDP =(JTextField) e.getSource();
+                    TextMDP.setText("");
+                    TextMDP.setForeground(Color.white);
+                }
+            }
+            @Override
+            public void mouseExited(MouseEvent e){
+                super.mouseExited(e);
+                if(pseudo.getText().equals("")){
+                    pseudo.setText("Utilisateur"+(controleur.getControleurCompte().getCompte().getUtilisateurs().size()+1));
+                }
+            }
+        });
+        pseudo.setText("Utilisateur"+(controleur.getControleurCompte().getCompte().getUtilisateurs().size()+1));
+        pseudo.setForeground(Color.white);
+        pseudo.setBackground(Color.gray);
+        for(int i=0;i<6;i++){
+            ImageIcon test = new ImageIcon("src/images/icone"+(i+1)+".png");
+            JButton icone = new JButton(new ImageIcon(test.getImage().getScaledInstance(100, 100, Image.SCALE_DEFAULT)));
+            icone.setBounds(50+i*190,370,100,100);
+            int finalI = i;
+            icone.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    indImg= finalI;
+                    //on change la photo de profil
+                    ImageIcon temp = new ImageIcon("src/images/icone"+(indImg+1)+".png");
+                    img.setIcon(new ImageIcon(temp.getImage().getScaledInstance(100, 100, Image.SCALE_DEFAULT)));
+                    updateUI();
+                }
+            });
+            container.add(icone);
+        }
+        JButton enreg = new JButton("Enregistrer");
+        JButton annul = new JButton("Annuler");
+        annul.setBounds(610,560,150,50);
+        annul.setBackground(new Color(1,113,121));
+        annul.setForeground(Color.white);
+
+        enreg.setBounds(440,560,150,50);
+        enreg.setBackground(new Color(1,113,121));
+        enreg.setForeground(Color.white);
+        enreg.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e){
+                Utilisateur nv = new Utilisateur();
+                nv.setPseudo(pseudo.getText());
+                String image="";
+                //on enregistre
+                if(indImg==0){
+                    image="icone1";
+                    nv.setPhotoProfil(new ImageIcon("src/images/icone1.png"));
+                }else if(indImg==1){
+                    image="icone2";
+                    nv.setPhotoProfil(new ImageIcon("src/images/icone2.png"));
+                }else if(indImg==2){
+                    image="icone3";
+                    nv.setPhotoProfil(new ImageIcon("src/images/icone3.png"));
+                }else if(indImg==3){
+                    image="icone4";
+                    nv.setPhotoProfil(new ImageIcon("src/images/icone4.png"));
+                }else if(indImg==4){
+                    image="icone5";
+                    nv.setPhotoProfil(new ImageIcon("src/images/icone5.png"));
+                }else if(indImg==5){
+                    image="icone6";
+                    nv.setPhotoProfil(new ImageIcon("src/images/icone6.png"));
+                }
+                //Dans la BDD
+                try {
+                    controleur.getDAO().NouveauUtilisateur(pseudo.getText(),controleur.getControleurCompte().getCompte().getEmail(),image);
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+                //Dans notre controleur
+                controleur.getControleurCompte().getCompte().getUtilisateurs().add(nv);
+                controleur.getControleurCompte().getCompte().setUtilisateuractuel(controleur.getControleurCompte().getCompte().getUtilisateurs().size()-1);
+                controleur.setAction("Choix Utilisateurs");
+            }
+        });
+        annul.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e){
+                //verif on peut suppr et on suppr
+                controleur.setAction("Gestion Profil");
+            }
+        });
+        container.add(enreg);
+        container.add(annul);
+        container.add(modif);
+        container.add(titre);
+        container.add(pseudo);
+        container.add(img);
+        add(container);
+        updateUI();
+    }
+    public void gestionProfil(){
+        container.removeAll();
+        MouseAdapter test;
+        test = new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                //Choix du profil
+                controleur.setAction("Ajouter Utilisateur");
+            }
+        };
+        container.setBackground(new Color(20,20,20));
+        JLabel titre = new JLabel("Gestion des profils :",JLabel.CENTER);
+        titre.setFont(new Font("Arial",Font.BOLD, 30));
+        titre.setForeground(Color.white);
+        titre.setBounds(400,170,400,40);
+        for(int i=0;i<controleur.getControleurCompte().getCompte().getUtilisateurs().size();i++){
+            if(controleur.getControleurCompte().getCompte().getUtilisateurs().size()==3){
+                JButton icone = new JButton();
+                icone.setIcon(new ImageIcon(controleur.getControleurCompte().getCompte().getUtilisateurs().get(i).getPhotoProfil().getImage().getScaledInstance(150, 150, Image.SCALE_DEFAULT)));
+                icone.setText("Modifier");
+                icone.setVerticalTextPosition(SwingConstants.CENTER);
+                icone.setHorizontalTextPosition(SwingConstants.CENTER);
+                icone.setForeground(Color.black);
+                icone.setFont(new Font("Arial",Font.BOLD, 18));
+
+                icone.setBounds(150+250*i,250,150,150);
+                JLabel pseudo = new JLabel(controleur.getControleurCompte().getCompte().getUtilisateurs().get(i).getPseudo());
+                pseudo.setBounds(160+250*i,360,150,150);
+                pseudo.setForeground(Color.white);
+                pseudo.setFont(new Font("Arial",Font.PLAIN, 25));
+                int finalI = i;
+                icone.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        super.mouseClicked(e);
+                        controleur.getControleurCompte().getCompte().setUtilisateuractuel(finalI);
+                        controleur.setAction("Mofidier Utilisateur");
+                        System.out.println("Utilisateur"+finalI);
+                    }
+                });
+                container.add(icone);
+                container.add(pseudo);
+                if(i == controleur.getControleurCompte().getCompte().getUtilisateurs().size() - 1){
+                    JButton add = new JButton(new ImageIcon("src/images/Ajout.png"));
+                    add.setBackground(new Color(20,20,20));
+                    add.setBorderPainted(false);
+                    add.setSelected(false);
+                    add.setBounds(150+250*(i+1),250,150,150);
+                    add.addMouseListener(test);
+                    JLabel ajout = new JLabel("Nouvel Utilisateur");
+                    ajout.setBounds(150+250*(i+1),360,250,150);
+                    ajout.setForeground(Color.white);
+                    ajout.setFont(new Font("Arial",Font.PLAIN, 25));
+                    container.add(add);
+                    container.add(ajout);
+                }
+            }else if((controleur.getControleurCompte().getCompte().getUtilisateurs().size() == 4) || (controleur.getControleurCompte().getCompte().getUtilisateurs().size() == 5)){
+                JButton icone = new JButton();
+                icone.setIcon(new ImageIcon(controleur.getControleurCompte().getCompte().getUtilisateurs().get(i).getPhotoProfil().getImage().getScaledInstance(120, 120, Image.SCALE_DEFAULT)));
+                icone.setText("Modifier");
+                icone.setVerticalTextPosition(SwingConstants.CENTER);
+                icone.setHorizontalTextPosition(SwingConstants.CENTER);
+                icone.setForeground(Color.black);
+                icone.setFont(new Font("Arial",Font.BOLD, 18));
+                icone.setBounds(90+210*i,250,120,120);
+                JLabel pseudo = new JLabel(controleur.getControleurCompte().getCompte().getUtilisateurs().get(i).getPseudo());
+                pseudo.setBounds(92+210*i,340,150,150);
+                pseudo.setForeground(Color.white);
+                pseudo.setFont(new Font("Arial",Font.PLAIN, 25));
+                int finalI = i;
+                icone.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        super.mouseClicked(e);
+                        controleur.getControleurCompte().getCompte().setUtilisateuractuel(finalI);
+                        controleur.setAction("Mofidier Utilisateur");
+                        System.out.println("Utilisateur"+finalI);
+                    }
+                });
+                container.add(icone);
+                container.add(pseudo);
+                if(i == controleur.getControleurCompte().getCompte().getUtilisateurs().size()-1 && controleur.getControleurCompte().getCompte().getUtilisateurs().size() == 4){
+                    JButton add = new JButton(new ImageIcon("src/images/Ajout.png"));
+                    add.setBackground(new Color(20,20,20));
+                    add.setBorderPainted(false);
+                    add.setSelected(false);
+                    add.setBounds(90+210*(i+1),245,150,150);
+                    add.addMouseListener(test);
+                    JLabel ajout = new JLabel("Nouvel Utilisateur");
+                    ajout.setBounds(90+210*(i+1),340,250,150);
+                    ajout.setForeground(Color.white);
+                    ajout.setFont(new Font("Arial",Font.PLAIN, 25));
+                    container.add(add);
+                    container.add(ajout);
+                }
+            }else if(controleur.getControleurCompte().getCompte().getUtilisateurs().size()==2){
+                JButton icone = new JButton();
+                icone.setIcon(new ImageIcon(controleur.getControleurCompte().getCompte().getUtilisateurs().get(i).getPhotoProfil().getImage().getScaledInstance(150, 150, Image.SCALE_DEFAULT)));
+                icone.setText("Modifier");
+                icone.setVerticalTextPosition(SwingConstants.CENTER);
+                icone.setHorizontalTextPosition(SwingConstants.CENTER);
+                icone.setForeground(Color.black);
+                icone.setFont(new Font("Arial",Font.BOLD, 18));
+                icone.setBounds(260+250*i,250,150,150);
+                int finalI = i;
+                icone.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        super.mouseClicked(e);
+                        controleur.getControleurCompte().getCompte().setUtilisateuractuel(finalI);
+                        controleur.setAction("Mofidier Utilisateur");
+                        System.out.println("Utilisateur"+finalI);
+                    }
+                });
+                JLabel pseudo = new JLabel(controleur.getControleurCompte().getCompte().getUtilisateurs().get(i).getPseudo());
+                pseudo.setBounds(270+250*i,360,150,150);
+                pseudo.setForeground(Color.white);
+                pseudo.setFont(new Font("Arial",Font.PLAIN, 25));
+                container.add(icone);
+                container.add(pseudo);
+                if(i == controleur.getControleurCompte().getCompte().getUtilisateurs().size() - 1){
+                    JButton add = new JButton(new ImageIcon("src/images/Ajout.png"));
+                    add.setBackground(new Color(20,20,20));
+                    add.setBorderPainted(false);
+                    add.setSelected(false);
+                    add.addMouseListener(test);
+                    add.setBounds(260+250*(i+1),250,150,150);
+                    JLabel ajout = new JLabel("Nouvel Utilisateur");
+                    ajout.setBounds(260+250*(i+1),360,250,150);
+                    ajout.setForeground(Color.white);
+                    ajout.setFont(new Font("Arial",Font.PLAIN, 25));
+                    container.add(add);
+                    container.add(ajout);
+                }
+            }else{
+                JButton icone = new JButton();
+                icone.setIcon(new ImageIcon(controleur.getControleurCompte().getCompte().getUtilisateurs().get(i).getPhotoProfil().getImage().getScaledInstance(150, 150, Image.SCALE_DEFAULT)));
+                icone.setText("Modifier");
+                icone.setVerticalTextPosition(SwingConstants.CENTER);
+                icone.setHorizontalTextPosition(SwingConstants.CENTER);
+                icone.setForeground(Color.black);
+                icone.setFont(new Font("Arial",Font.BOLD, 18));
+                icone.setBounds(360+250*i,250,150,150);
+                JLabel pseudo = new JLabel(controleur.getControleurCompte().getCompte().getUtilisateurs().get(i).getPseudo());
+                int finalI = i;
+                icone.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        super.mouseClicked(e);
+                        controleur.getControleurCompte().getCompte().setUtilisateuractuel(finalI);
+                        controleur.setAction("Mofidier Utilisateur");
+                        System.out.println("Utilisateur"+ finalI);
+                    }
+                });
+                pseudo.setBounds(370+250*i,360,150,150);
+                pseudo.setForeground(Color.white);
+                pseudo.setFont(new Font("Arial",Font.PLAIN, 25));
+                container.add(icone);
+                container.add(pseudo);
+                if(i == controleur.getControleurCompte().getCompte().getUtilisateurs().size() - 1){
+                    JButton add = new JButton(new ImageIcon("src/images/Ajout.png"));
+                    add.setBackground(new Color(20,20,20));
+                    add.setBorderPainted(false);
+                    add.setSelected(false);
+                    add.addMouseListener(test);
+                    add.setBounds(360+250*(i+1),250,150,150);
+                    JLabel ajout = new JLabel("Nouvel Utilisateur");
+                    ajout.setBounds(360+250*(i+1),360,250,150);
+                    ajout.setForeground(Color.white);
+                    ajout.setFont(new Font("Arial",Font.PLAIN, 25));
+                    container.add(add);
+                    container.add(ajout);
+                }
+            }
+        }
+        JButton manageCompte = new JButton("Terminé");
+        manageCompte.setBounds(490,560,200,70);
+        manageCompte.setBackground(new Color(1,113,121));
+        manageCompte.setForeground(Color.white);
+        manageCompte.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e){
+                controleur.setAction("Choix Utilisateurs");
+            }
+        });
+        container.add(manageCompte);
+        container.add(titre);
+        container.setSize(1200,800);
+        container.setPreferredSize(container.getPreferredSize());
+        add(container,BorderLayout.CENTER);
+        updateUI();
+        setVisible(true);
     }
     public void setController(FenetreControleur fn){
         this.controleur=fn;

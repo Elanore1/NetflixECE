@@ -1,11 +1,14 @@
 package controleur;
+
 import modele.Film;
 import modele.NetflixBDD;
 import vue.ViewBarreMenu;
 import vue.ViewContenu;
 import vue.ViewFenetre;
+
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class FenetreControleur{
     boolean end;//bool pour quitter la fenetre
@@ -43,10 +46,6 @@ public class FenetreControleur{
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        for(int i = 0;i<bddFilm.getTop().size();i++){
-            System.out.println(bddFilm.getTop().get(i).getTitre());//on affiche chaque film
-        }
-        action="Netflix";
         do{
             switch(action){
                 case "Acceuil":
@@ -70,8 +69,23 @@ public class FenetreControleur{
                     action="pause";
                     break;
                 case "Film":
-                    System.out.println("Film");
                     fenetre.LancementFilm();
+                    action="pause";
+                    break;
+                case "Ajouter Utilisateur":
+                    fenetre.NouvelUtilisateur();
+                    action="pause";
+                    break;
+                case "Gestion Profil":
+                    fenetre.GestionProfil();
+                    action="pause";
+                    break;
+                case "Mofidier Utilisateur":
+                    fenetre.ModifUtilisateur();
+                    action="pause";
+                    break;
+                case "Recherche":
+                    fenetre.Recherche();
                     action="pause";
                     break;
             }
@@ -83,10 +97,40 @@ public class FenetreControleur{
     public NetflixBDD getBDD(){
         return bddFilm;
     }
+    public RechercheInfo getDAO(){return DAO;}
     public Film getFilm(){return film;}
     public void setFilm(Film _flm){this.film=_flm;}
     public ControleurCompte getControleurCompte(){
         return compte;
+    }
+    public ArrayList<Film> remplirFilm(ArrayList<String> maliste){
+        ArrayList<Film> lst = new ArrayList<Film>();
+        System.out.println("String size"+maliste);
+        for(int i=0;i<maliste.size();i++){
+            i+=2;
+            for(Film flm : bddFilm.getTop()){
+                if(maliste.get(i).equals(flm.getTitre()))
+                    lst.add(flm);
+            }
+            for(Film flm : bddFilm.getFilms()){
+                if(maliste.get(i).equals(flm.getTitre()))
+                    lst.add(flm);
+            }
+            for(Film flm : bddFilm.getAnime()){
+                if(maliste.get(i).equals(flm.getTitre()))
+                    lst.add(flm);
+            }
+            for(Film flm : bddFilm.getSerie()){
+                if(maliste.get(i).equals(flm.getTitre()))
+                    lst.add(flm);
+            }
+            for(Film flm : bddFilm.getNouveaute()){
+                if(maliste.get(i).equals(flm.getTitre()))
+                    lst.add(flm);
+            }
+        }
+        System.out.println("film size"+lst.size());
+        return lst;
     }
 
 }

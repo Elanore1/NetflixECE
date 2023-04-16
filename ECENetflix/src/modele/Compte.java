@@ -8,7 +8,7 @@ public class Compte{
     //plus tard peut etre creation liste d'usager comme dans netflix avec pseudo différent et max 5
     private String usager;//soit Client soit Direction ECENetflix
     private ArrayList<Utilisateur> utilisateurs;//liste des utilisateurs possible
-    private Utilisateur utilisateuractuel;
+    private int utilisateuractuel;
     public Compte(){
         this.email="";
         this.mdp="";
@@ -38,15 +38,11 @@ public class Compte{
     public void setUtilisateurs(ArrayList<Utilisateur> _utilisateurs){
         this.utilisateurs= (ArrayList<Utilisateur>)_utilisateurs.clone();
     }
-    public Utilisateur getUtilisateuractuel() {
+    public int getUtilisateuractuel() {
         return utilisateuractuel;
     }
     public void setUtilisateuractuel(int utilisateuractuel) {
-        this.utilisateuractuel = utilisateurs.get( utilisateuractuel);
-    }
-    public void addutilisateur(Utilisateur a)
-    {
-        utilisateurs.add( a );
+        this.utilisateuractuel = utilisateuractuel;
     }
     public void AjouterUtilisateur(Utilisateur a)
     {

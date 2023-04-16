@@ -12,16 +12,13 @@ import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 public class ControleurCompte {
-
     private ViewFenetre fenetre;//Vue
     private  ViewContenu panel;
     private  RechercheInfo DAO;//DAO
     private Compte compte;
-    private Utilisateur utilisateur;
     public ControleurCompte () {
         this.DAO=new RechercheInfo();
         this.compte=new Compte();
-        this.utilisateur=new Utilisateur();
     }
     public Compte getCompte() {
         return compte;
@@ -29,9 +26,6 @@ public class ControleurCompte {
     public void setCompte(String email, String mdp){
         compte.setMdp(mdp);
         compte.setEmail(email);
-    }
-    public void UtilisateurChoisi(Utilisateur a) {
-        utilisateur=a;
     }
     public void NouveauCompte(String email,String mdp) throws SQLException {
         //On crée un nouvel utilisateur avec des données prédéfinies
@@ -98,11 +92,6 @@ public class ControleurCompte {
                 return "special";
         }
     }
-    public void ConnexionCompte(String email,String mdp) {
-        compte.setEmail( email );
-        compte.setMdp(mdp);
-    }
-
     public boolean validateMail(String mail) {
         String text;
         try {
@@ -131,65 +120,39 @@ public class ControleurCompte {
         }else
             return false;
     }
-
-    public void EnregistreCompte(String email,String mdp) {
-        compte.setEmail( email );
-        compte.setMdp( mdp );
-    }
-
-    public void setUtilisateur(String pseudo) {
-        ArrayList<Utilisateur> utilisateurs= compte.getUtilisateurs();
-        for(int i=0;i<utilisateurs.size();i++) {
-            if(utilisateurs.get( i ).getPseudo()==pseudo) {
-                compte.setUtilisateuractuel( i );
-            }
-
-        }
-    }
-
-    public void modificationUtilisateur(String pseudo) {
-
-
-        ArrayList<Utilisateur>utilisateurs=compte.getUtilisateurs();
-        boolean verif=true;
-
-
-        for(int i =0; i<utilisateurs.size();i++) {
-            if(utilisateurs.get( i ).getPseudo()==pseudo) {
-                verif=false;
-            }
-        }
-
-        if(verif) {
-
-        }
-
-    }
-    public ArrayList<Utilisateur> RecuperUtilisateurs() throws SQLException {
-        //System.out.println(compte.getEmail());
-        ArrayList<String>liste =DAO.RecupererUtilisateurs( compte.getEmail( ) );
-        ArrayList<Utilisateur>a = new ArrayList<>() ;
+    public void RecuperUtilisateurs() throws SQLException {
+        ArrayList<String>liste=DAO.RecupererUtilisateurs(compte.getEmail());
+        System.out.println(liste);
+        ArrayList<Utilisateur> a = new ArrayList<Utilisateur>() ;
         String mail;
-        //   System.out.println( liste.get(0) );
         String pe = null;
         String image;
-
-        for(int i=0;i< liste.size();i++){
-            // System.out.println(liste.get( i ) );
-            if(i%3==0)
-                mail=liste.get(i);
-            else if(i%3==1)
-                pe= liste.get(i);
-            else if(i%3==2) {
-                image=liste.get(i);
-                Utilisateur e = new Utilisateur();
-                e.setPseudo( pe );
-                ImageIcon v = new ImageIcon( "/src/images/FondAcceuil.png" );
-                e.setPhotoProfil(v);
-                a.add( e );
+        for(int i=0;i<liste.size();i++){
+            mail=liste.get(i);
+            pe=liste.get(i+1);
+            image=liste.get(i+2);
+            Utilisateur e = new Utilisateur();
+            e.setPseudo(pe);
+            ImageIcon v = null;
+            if(image.equals("icone1")) {
+                v = new ImageIcon("src/images/icone1.png");
+            }else if(image.equals("icone2")){
+                v = new ImageIcon("src/images/icone2.png");
+            }else if(image.equals("icone3")){
+                v = new ImageIcon("src/images/icone3.png");
+            }else if(image.equals("icone4")){
+                v = new ImageIcon("src/images/icone4.png");
+            }else if(image.equals("icone5")){
+                v = new ImageIcon("src/images/icone5.png");
+            }else if(image.equals("icone6")){
+                v = new ImageIcon("src/images/icone6.png");
             }
+            e.setPhotoProfil(v);
+            a.add(e);
+            i+=2;
         }
-        return a;
+        //return a;
+        compte.setUtilisateurs(a);
     }
     public Utilisateur nouveauUtilisateur() {
         String _pseudo="Utilisateur1";
@@ -200,5 +163,4 @@ public class ControleurCompte {
         Utilisateur a = new Utilisateur(_pseudo,_photoProfil,_maListe,_parametre);
         return a;
     }
-
 }
