@@ -2,7 +2,7 @@ package vue;
 
 import controleur.FenetreControleur;
 import modele.Fenetre;
-
+import modele.NetflixBDD;
 import javax.swing.*;
 import java.awt.*;
 import java.sql.SQLException;
@@ -121,6 +121,69 @@ public class ViewFenetre extends JFrame{
         setPanel(panel);
         setVisible(true);
     }
+
+    public void Graphiques(NetflixBDD bddFilm) throws SQLException {
+        panel.removeAll();
+        this.setLayout(null);
+        panel.setLayout(null);
+        panel.test(bddFilm);
+        panel.updateUI();
+        panel.setVisible( true );
+        setPanel(panel);
+        setVisible(true);
+    }
+    public void NetflixProprietaire() {
+        barmenu.setBarreProprietaire();
+        panel.setLayout( null );
+        panel.removeAll();
+        this.setLayout(null);
+        panel.setLayout(null);
+        panel.removeAll();
+        panel.NetflixProprietaire();
+        panel.updateUI();
+        barmenu.updateUI();
+        setPanel(panel);
+        setVisible(true);
+    }
+    public void FilmProprietaire(){
+        boolean top;
+        panel.removeAll();
+        panel.FormConnection();
+        setPanel(panel);
+        setVisible(true);
+        if(controleur.getBDD().getTop().contains( controleur.getFilm() ))
+            top=true;
+        else
+            top=false;
+        panel.FilmProprietaire(controleur.getFilm(),top);
+        setPanel(panel);
+        setVisible(true);
+    }
+
+    public void clients(){
+        this.setLayout(null);
+        barmenu.setBarreProprietaire();
+        panel.setLayout(null);
+        panel.removeAll();
+        panel.clients();
+        panel.updateUI();
+        barmenu.updateUI();
+        setPanel(panel);
+        setVisible(true);
+    }
+    public void MAJ() {
+        this.setLayout(null);
+        barmenu.setBarreProprietaire();
+        panel.removeAll();
+        panel.MAJFILM(controleur.getFilm());
+        panel.updateUI();
+        panel.setVisible( true );
+        barmenu.setBarreProprietaire();
+        setPanel(panel);
+        setVisible(true);
+    }
+
+
     //Pour recevoir les informations du controlleur
     public void setController(FenetreControleur fn){
         this.controleur=fn;

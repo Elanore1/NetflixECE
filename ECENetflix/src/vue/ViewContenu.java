@@ -1,15 +1,24 @@
 package vue;
-
 import controleur.FenetreControleur;
 import controleur.RechercheInfo;
 import modele.Film;
+import modele.Compte;
+import modele.NetflixBDD;
 import modele.Utilisateur;
-
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PiePlot;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.data.general.DefaultPieDataset;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicScrollBarUI;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
@@ -30,7 +39,6 @@ public class ViewContenu extends JPanel{
     public boolean var = false;
     JPanel desc  = new JPanel(null);
     JPanel container = new JPanel(null);
-
     int indImg;
 
     public ViewContenu() { // constructeur par surchargé
@@ -511,6 +519,8 @@ public class ViewContenu extends JPanel{
         affiche.setBounds(15 + i*230,75, 200, 160);
         return affiche;
     }
+
+    ///GESTION CLIENT///
     //affichage d'un formulaire de connection
     public void FormConnection(){
         //on met image en fond
@@ -626,9 +636,22 @@ public class ViewContenu extends JPanel{
                     updateUI();
                 } else {//relachement
                     if(var==true){
+                        String usager;
                         //pour laisser un temps avant de s connecter
+                        try {
+                            usager = controleur.getDAO().recupCompte(TextEmail.getText(),TextMDP.getText());
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        System.out.println("usager:"+usager);
                         controleur.getControleurCompte().setCompte(TextEmail.getText(),TextMDP.getText());
-                        controleur.setAction("Choix Utilisateurs");
+                        if(usager.replaceAll(" ","").equals("direction")){
+                            System.out.println("dans prop");
+                            controleur.setAction("Netflix Proprietaire");
+                        }else{
+                            controleur.setAction("Choix Utilisateurs");
+                        }
+                        var=false;
                     }
                 }
             }
@@ -1050,12 +1073,14 @@ public class ViewContenu extends JPanel{
                     public void mouseClicked(MouseEvent e) {
                         super.mouseClicked(e);
                         controleur.getControleurCompte().getCompte().setUtilisateuractuel(finalI);
-                        ArrayList<String> lst;
+                        ArrayList<String> lst,note;
                         try {
                             lst = controleur.getDAO().RecupererListe(controleur.getControleurCompte().getCompte().getEmail(),controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getPseudo());
+                            note = controleur.getDAO().RecupererNote(controleur.getControleurCompte().getCompte().getEmail(),controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getPseudo());
                         } catch (SQLException ex) {
                             throw new RuntimeException(ex);
                         }
+                        controleur.remplirNote(note);
                         controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).setMaListe(controleur.remplirFilm(lst));
                         controleur.setAction("Netflix");
                         System.out.println("Utilisateur"+finalI);
@@ -1090,12 +1115,14 @@ public class ViewContenu extends JPanel{
                     public void mouseClicked(MouseEvent e) {
                         super.mouseClicked(e);
                         controleur.getControleurCompte().getCompte().setUtilisateuractuel(finalI);
-                        ArrayList<String> lst;
+                        ArrayList<String> lst,note;
                         try {
                             lst = controleur.getDAO().RecupererListe(controleur.getControleurCompte().getCompte().getEmail(),controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getPseudo());
+                            note = controleur.getDAO().RecupererNote(controleur.getControleurCompte().getCompte().getEmail(),controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getPseudo());
                         } catch (SQLException ex) {
                             throw new RuntimeException(ex);
                         }
+                        controleur.remplirNote(note);
                         controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).setMaListe(controleur.remplirFilm(lst));
                         controleur.setAction("Netflix");
                         System.out.println("Utilisateur"+finalI);
@@ -1126,12 +1153,14 @@ public class ViewContenu extends JPanel{
                     public void mouseClicked(MouseEvent e) {
                         super.mouseClicked(e);
                         controleur.getControleurCompte().getCompte().setUtilisateuractuel(finalI);
-                        ArrayList<String> lst;
+                        ArrayList<String> lst,note;
                         try {
                             lst = controleur.getDAO().RecupererListe(controleur.getControleurCompte().getCompte().getEmail(),controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getPseudo());
+                            note = controleur.getDAO().RecupererNote(controleur.getControleurCompte().getCompte().getEmail(),controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getPseudo());
                         } catch (SQLException ex) {
                             throw new RuntimeException(ex);
                         }
+                        controleur.remplirNote(note);
                         controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).setMaListe(controleur.remplirFilm(lst));
                         controleur.setAction("Netflix");
                         System.out.println("Utilisateur"+finalI);
@@ -1167,12 +1196,14 @@ public class ViewContenu extends JPanel{
                     public void mouseClicked(MouseEvent e) {
                         super.mouseClicked(e);
                         controleur.getControleurCompte().getCompte().setUtilisateuractuel(finalI);
-                        ArrayList<String> lst;
+                        ArrayList<String> lst,note;
                         try {
                             lst = controleur.getDAO().RecupererListe(controleur.getControleurCompte().getCompte().getEmail(),controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getPseudo());
+                            note = controleur.getDAO().RecupererNote(controleur.getControleurCompte().getCompte().getEmail(),controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getPseudo());
                         } catch (SQLException ex) {
                             throw new RuntimeException(ex);
                         }
+                        controleur.remplirNote(note);
                         controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).setMaListe(controleur.remplirFilm(lst));
                         controleur.setAction("Netflix");
                         System.out.println("Utilisateur"+ finalI);
@@ -1444,6 +1475,7 @@ public class ViewContenu extends JPanel{
     }
     public void filmView(Film voir){
         boolean InListe=false;
+
         JPanel film = new JPanel(null);
         JLabel note  = new JLabel("Votre Avis :");
         JButton liste = new JButton("Ajouter a ma Liste");
@@ -1548,6 +1580,28 @@ public class ViewContenu extends JPanel{
         c3.setSelectedIcon(new ImageIcon("src/images/etoilePleine.png"));
         c4.setSelectedIcon(new ImageIcon("src/images/etoilePleine.png"));
         c5.setSelectedIcon(new ImageIcon("src/images/etoilePleine.png"));
+        //Recup info pour voir si ya une note
+        if(voir.getNote()==1){
+            c1.setSelected(true);
+        }else if(voir.getNote()==2){
+            c1.setSelected(true);
+            c2.setSelected(true);
+        }else if(voir.getNote()==3){
+            c1.setSelected(true);
+            c2.setSelected(true);
+            c3.setSelected(true);
+        }else if(voir.getNote()==4){
+            c1.setSelected(true);
+            c2.setSelected(true);
+            c3.setSelected(true);
+            c4.setSelected(true);
+        }else if(voir.getNote()==5){
+            c1.setSelected(true);
+            c2.setSelected(true);
+            c3.setSelected(true);
+            c4.setSelected(true);
+            c5.setSelected(true);
+        }
         c5.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -1556,12 +1610,32 @@ public class ViewContenu extends JPanel{
                     c3.setSelected(true);
                     c2.setSelected(true);
                     c1.setSelected(true);
+                    if(voir.getNote()==-1){
+                        try {
+                            controleur.getDAO().AjoutNote(controleur.getControleurCompte().getCompte().getEmail(),controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getPseudo(),voir.getTitre(),5);
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                    }else{
+                        try {
+                            controleur.getDAO().ModifNote(controleur.getControleurCompte().getCompte().getEmail(),controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getPseudo(),voir.getTitre(),5);
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                    }
+                    voir.setNote(5);
                 }else{
                     c5.setSelected(false);
                     c4.setSelected(false);
                     c3.setSelected(false);
                     c2.setSelected(false);
                     c1.setSelected(false);
+                    try {
+                        controleur.getDAO().supprimerNote(controleur.getControleurCompte().getCompte().getEmail(),controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getPseudo(),voir.getTitre());
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    voir.setNote(-1);
                 }
             }
         });
@@ -1572,18 +1646,44 @@ public class ViewContenu extends JPanel{
                     c3.setSelected(true);
                     c2.setSelected(true);
                     c1.setSelected(true);
+                    if(voir.getNote()==-1){
+                        try {
+                            controleur.getDAO().AjoutNote(controleur.getControleurCompte().getCompte().getEmail(),controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getPseudo(),voir.getTitre(),4);
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                    }else{
+                        try {
+                            controleur.getDAO().ModifNote(controleur.getControleurCompte().getCompte().getEmail(),controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getPseudo(),voir.getTitre(),4);
+                        }catch(SQLException ex){
+                            throw new RuntimeException(ex);
+                        }
+                    }
+                    voir.setNote(4);
                 }else if(c5.isSelected()){
                     c5.setSelected(false);
                     c4.setSelected(true);
                     c3.setSelected(true);
                     c2.setSelected(true);
                     c1.setSelected(true);
+                    try {
+                        controleur.getDAO().ModifNote(controleur.getControleurCompte().getCompte().getEmail(),controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getPseudo(),voir.getTitre(),4);
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    voir.setNote(4);
                 }else{
                     c5.setSelected(false);
                     c4.setSelected(false);
                     c3.setSelected(false);
                     c2.setSelected(false);
                     c1.setSelected(false);
+                    try {
+                        controleur.getDAO().supprimerNote(controleur.getControleurCompte().getCompte().getEmail(),controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getPseudo(),voir.getTitre());
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    voir.setNote(-1);
                 }
             }
         });
@@ -1593,18 +1693,44 @@ public class ViewContenu extends JPanel{
                 if(c3.isSelected() && !c5.isSelected() && !c4.isSelected()){
                     c2.setSelected(true);
                     c1.setSelected(true);
+                    if(voir.getNote()==-1){
+                        try {
+                            controleur.getDAO().AjoutNote(controleur.getControleurCompte().getCompte().getEmail(),controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getPseudo(),voir.getTitre(),3);
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                    }else{
+                        try {
+                            controleur.getDAO().ModifNote(controleur.getControleurCompte().getCompte().getEmail(),controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getPseudo(),voir.getTitre(),3);
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                    }
+                    voir.setNote(3);
                 }else if(c4.isSelected() || c5.isSelected()){
                     c5.setSelected(false);
                     c4.setSelected(false);
                     c3.setSelected(true);
                     c2.setSelected(true);
                     c1.setSelected(true);
+                    try {
+                        controleur.getDAO().ModifNote(controleur.getControleurCompte().getCompte().getEmail(),controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getPseudo(),voir.getTitre(),3);
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    voir.setNote(3);
                 }else{
                     c5.setSelected(false);
                     c4.setSelected(false);
                     c3.setSelected(false);
                     c2.setSelected(false);
                     c1.setSelected(false);
+                    try {
+                        controleur.getDAO().supprimerNote(controleur.getControleurCompte().getCompte().getEmail(),controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getPseudo(),voir.getTitre());
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    voir.setNote(-1);
                 }
             }
         });
@@ -1613,18 +1739,44 @@ public class ViewContenu extends JPanel{
             public void actionPerformed(ActionEvent e) {
                 if(c2.isSelected() && !c5.isSelected() && !c4.isSelected() && !c3.isSelected()){
                     c1.setSelected(true);
+                    if(voir.getNote()==-1){
+                        try {
+                            controleur.getDAO().AjoutNote(controleur.getControleurCompte().getCompte().getEmail(),controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getPseudo(),voir.getTitre(),2);
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                    }else{
+                        try {
+                            controleur.getDAO().ModifNote(controleur.getControleurCompte().getCompte().getEmail(),controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getPseudo(),voir.getTitre(),2);
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                    }
+                    voir.setNote(2);
                 }else if(c4.isSelected() || c5.isSelected() || c3.isSelected()) {
                     c5.setSelected(false);
                     c4.setSelected(false);
                     c3.setSelected(false);
                     c2.setSelected(true);
                     c1.setSelected(true);
+                    try {
+                        controleur.getDAO().ModifNote(controleur.getControleurCompte().getCompte().getEmail(),controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getPseudo(),voir.getTitre(),2);
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    voir.setNote(2);
                 }else{
                     c5.setSelected(false);
                     c4.setSelected(false);
                     c3.setSelected(false);
                     c2.setSelected(false);
                     c1.setSelected(false);
+                    try {
+                        controleur.getDAO().supprimerNote(controleur.getControleurCompte().getCompte().getEmail(),controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getPseudo(),voir.getTitre());
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    voir.setNote(-1);
                 }
             }
         });
@@ -1633,18 +1785,44 @@ public class ViewContenu extends JPanel{
             public void actionPerformed(ActionEvent e) {
                 if(c1.isSelected() && !c5.isSelected() && !c4.isSelected() && !c3.isSelected()&& !c2.isSelected()){
                     c1.setSelected(true);
+                    if(voir.getNote()==-1){
+                        try {
+                            controleur.getDAO().AjoutNote(controleur.getControleurCompte().getCompte().getEmail(),controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getPseudo(),voir.getTitre(),1);
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                    }else{
+                        try {
+                            controleur.getDAO().ModifNote(controleur.getControleurCompte().getCompte().getEmail(),controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getPseudo(),voir.getTitre(),1);
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                    }
+                    voir.setNote(1);
                 }else if(c4.isSelected() || c5.isSelected() || c3.isSelected()|| c2.isSelected()) {
                     c5.setSelected(false);
                     c4.setSelected(false);
                     c3.setSelected(false);
                     c2.setSelected(false);
                     c1.setSelected(true);
+                    try {
+                        controleur.getDAO().ModifNote(controleur.getControleurCompte().getCompte().getEmail(),controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getPseudo(),voir.getTitre(),1);
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    voir.setNote(1);
                 }else{
                     c5.setSelected(false);
                     c4.setSelected(false);
                     c3.setSelected(false);
                     c2.setSelected(false);
                     c1.setSelected(false);
+                    try {
+                        controleur.getDAO().supprimerNote(controleur.getControleurCompte().getCompte().getEmail(),controleur.getControleurCompte().getCompte().getUtilisateurs().get(controleur.getControleurCompte().getCompte().getUtilisateuractuel()).getPseudo(),voir.getTitre());
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    voir.setNote(-1);
                 }
             }
         });
@@ -2258,6 +2436,1057 @@ public class ViewContenu extends JPanel{
         add(container,BorderLayout.CENTER);
         updateUI();
         setVisible(true);
+    }
+
+    ///GESTION DIRECTION///
+    public JFreeChart BarreGenreFilm(NetflixBDD BDD) {
+        int nbSF = 0, nbAction = 0, nbThriller = 0, nbDrame = 0, nbAventure = 0;
+        int percentSF = 0, percentAction = 0, percentThriller = 0, percentDrame = 0, percentAventure = 0;
+        ArrayList<Film> Films = BDD.getTop( );
+        //System.out.println(Films.size());
+        for (int i = 0; i < Films.size( ); i++) {
+            System.out.println( Films.get( i ).getTitre( ) );
+            if( Films.get( i ).getGenre( ).contains( "S-F" ) ){
+                nbSF++;
+                percentSF += Films.get( i ).getPercent( );
+            }
+
+            if( Films.get( i ).getGenre( ).contains( "Action" ) ){
+                nbAction++;
+                percentAction += Films.get( i ).getPercent( );
+            }
+
+            if( Films.get( i ).getGenre( ).contains( "Thriller" ) ){
+                nbThriller++;
+                percentThriller += Films.get( i ).getPercent( );
+            }
+            if( Films.get( i ).getGenre( ).contains( "Drame" ) ){
+                nbDrame++;
+                percentDrame += Films.get( i ).getPercent( );
+            }
+            if( Films.get( i ).getGenre( ).contains( "Aventure" ) ){
+                nbAventure++;
+                percentAventure += Films.get( i ).getPercent( );
+            }
+        }
+        percentAction = percentAction / nbAction;
+        percentDrame = percentDrame / nbDrame;
+
+        if(nbAventure!=0)
+            percentAventure = percentAventure / nbAventure;
+
+        percentThriller = percentThriller / nbThriller;
+        percentSF = percentSF / nbSF;
+
+
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset( );
+        dataset.addValue( percentSF, "pourcentageSf", " " );
+        dataset.addValue( percentAction, "PourcentageAction", " " );
+        dataset.addValue( percentDrame, "PourcentageAction Drame", " " );
+        dataset.addValue( percentAventure, "Pourcentage Aventure", " " );
+        dataset.addValue( percentThriller, "pourcentage Thriller", " " );
+        //dataset.addValue(2.0, "Series 2", "Category 3");
+        JFreeChart chart = ChartFactory.createBarChart( "Genre les plus vues", "Genre", "Vues", dataset, PlotOrientation.VERTICAL, true, true, false );
+
+        return chart;
+    }
+    public JFreeChart NombreCategorie(NetflixBDD BDD) {
+        int nbSF = 0, nbAction = 0, nbThriller = 0, nbDrame = 0, nbAventure = 0;
+
+        ArrayList<Film> Films = BDD.getTop( );
+        for (Film film : Films) {
+            if( film.getGenre( ).contains( "S-F" ) ){
+                nbSF++;
+            }
+
+            if( film.getGenre( ).contains( "Action" ) ){
+                nbAction++;
+            }
+
+            if( film.getGenre( ).contains( "Thriller" ) ){
+                nbThriller++;
+            }
+            if( film.getGenre( ).contains( "Drame" ) ){
+                nbDrame++;
+            }
+            if( film.getGenre( ).contains( "Aventure" ) ){
+                nbAventure++;
+            }
+        }
+        DefaultPieDataset dataset = new DefaultPieDataset( );
+        dataset.setValue( "SF", nbSF );
+        dataset.setValue( "Action", nbAction );
+        dataset.setValue( "Drame", nbDrame );
+        dataset.setValue( "Aventure", nbAventure );
+        dataset.setValue( "Thriller", nbThriller );
+
+        JFreeChart chart = ChartFactory.createPieChart(
+                "Répartition des catégories de genre de films sur Netflix",
+                dataset,
+                true,
+                true,
+                false );
+
+
+        PiePlot plot = (PiePlot) chart.getPlot( );
+        plot.setSectionPaint( "SF", new Color( 0, 128, 0 ) );
+        plot.setSectionPaint( "Action", new Color( 255, 128, 0 ) );
+        plot.setSectionPaint( "Drame", new Color( 0, 0, 128 ) );
+        plot.setSectionPaint( "Aventure", new Color( 128, 128, 128 ) );
+
+        plot.setSimpleLabels( true );
+
+        JPanel chartPanel = (new org.jfree.chart.ChartPanel( chart ));
+        chartPanel.setPreferredSize( new Dimension( 300, 150 ) );
+        chartPanel.setLocation( 100, 100 );
+
+        return chart;
+    }
+
+    public void test(NetflixBDD BDD) {
+        container.removeAll( );
+        container.setLayout( null );
+        container.removeAll(  );
+        desc.removeAll( );
+        container.setBackground( new Color( 100, 200, 200 ) );
+        container.setPreferredSize( new Dimension( 450, 500 ) );
+        // créer les graphiques
+        JFreeChart chart1 = BarreGenreFilm(BDD);
+        JFreeChart chart2 = NombreCategorie(BDD);
+
+        // créer un panneau pour les graphiques
+        JPanel chartPanel = new JPanel( new GridLayout( 1, 2 ) );
+        chartPanel.add( new ChartPanel( chart1 ) );
+        chartPanel.add( new ChartPanel( chart2 ) );
+
+        chartPanel.setBounds( 0, 0, 1300, 700 );
+
+        // ajouter le panneau parent au conteneur parent
+        container.add( chartPanel );
+        container.setSize( 1300, 700 );
+        container.setPreferredSize( container.getPreferredSize( ) );
+        revalidate( );
+        repaint( );
+        // redessiner le conteneur parent
+        container.setBounds( 0, 0, 1300, 700 );
+        add( container );
+        setVisible( true );
+    }
+    public void NetflixProprietaire() {
+        container.setLayout( null );
+        container.removeAll( );
+        desc.removeAll( );
+        //On met ca juste pour les test d'affichage
+        ArrayList<Film> listeMesfilms = new ArrayList<Film>( );//pour maliste apparition, disparition
+        //listFilm=new ArrayList<Film>();
+
+        //JPanel container = new JPanel(null);
+        container.setBackground( new Color( 20, 20, 20 ) );
+        //Top 10
+        JLabel top10 = new JLabel( new ImageIcon( "src/images/top10.png" ), JLabel.CENTER );
+        JPanel separateur = new JPanel( null );
+        JLabel titre = new JLabel( "TOP 10 en France aujourd'hui" );
+        titre.setFont( new Font( "Arial", Font.BOLD, 25 ) );
+        titre.setForeground( Color.white );
+        titre.setBounds( 10, 15, 400, 60 );
+        separateur.setBackground( new Color( 20, 20, 20 ) );
+        separateur.setBounds( 0, 0, 1200, 100 );
+        separateur.add( titre );
+        top10.setBounds( 0, 100, 2800, 200 );
+        JButton droite = new JButton( " > " );
+        JButton gauche = new JButton( " < " );
+        droite.setBackground( new Color( 0, 0, 0, 150 ) );
+        droite.setForeground( Color.white );
+        droite.setBounds( 1121, 0, 50, 200 );
+        droite.setEnabled( false );
+        gauche.setBackground( new Color( 0, 0, 0, 150 ) );
+        gauche.setForeground( Color.white );
+        gauche.setBounds( 0, 0, 50, 200 );
+        gauche.setEnabled( false );
+        droite.setVisible( true );
+        gauche.setVisible( true );
+        JPanel b1 = bande( listeMesfilms, "Ma Liste", 0 );
+        JPanel b2 = bande( controleur.getBDD( ).getFilms( ), "Films", 1 );
+        JPanel b3 = bande( controleur.getBDD( ).getSerie( ), "Séries", 2 );
+        JPanel b4 = bande( controleur.getBDD( ).getNouveaute( ), "Nouveautés", 3 );
+        JPanel b5 = bande( controleur.getBDD( ).getAnime( ), "Animés", 4 );
+        System.out.println( listeMesfilms.size( ) );
+        if( listeMesfilms.size( ) == 0 ){
+            container.setSize( 2050, 1750 );
+            container.setPreferredSize( container.getPreferredSize( ) );
+            b2.setBounds( 0, 330, 1200, 340 );
+            b3.setBounds( 0, 665, 1200, 340 );
+            b4.setBounds( 0, 1000, 1200, 340 );
+            b5.setBounds( 0, 1335, 1200, 340 );
+        } else {
+            container.setSize( 2050, 2050 );
+            container.setPreferredSize( container.getPreferredSize( ) );
+            b1.setBounds( 0, 330, 1200, 340 );
+            b2.setBounds( 0, 665, 1200, 340 );
+            b3.setBounds( 0, 1000, 1200, 340 );
+            b4.setBounds( 0, 1335, 1200, 340 );
+            b5.setBounds( 0, 1670, 1200, 340 );
+        }
+        droite.addMouseListener( new MouseListener( ) {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                droite.setBackground( new Color( 0, 0, 0, 150 ) );
+                System.out.println( top10.getLocation( ));
+                //si on est de 1 à 7
+                if( top10.getLocation( ).equals( new Point( 0, 100 ) ) ){
+                    top10.setLocation( -1135, 100 );
+                    droite.setBounds( 2256, 0, 50, 200 );
+                    gauche.setBounds( 1133, 0, 50, 200 );
+                } else {
+                    top10.setLocation( 0, 100 );
+                    droite.setBounds( 1121, 0, 50, 200 );
+                    gauche.setBounds( 0, 0, 50, 200 );
+                }
+                updateUI( );
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                droite.setBackground( new Color( 0, 0, 0, 150 ) );
+                updateUI( );
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                droite.setBackground( new Color( 0, 0, 0, 150 ) );
+                updateUI( );
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                droite.setBackground( new Color( 0, 0, 0, 150 ) );
+                updateUI( );
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                droite.setBackground( new Color( 0, 0, 0, 150 ) );
+                updateUI( );
+            }
+        } );
+        gauche.addMouseListener( new MouseListener( ) {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                gauche.setBackground( new Color( 0, 0, 0, 150 ) );
+                System.out.println( top10.getLocation( ) );
+                //si on est de 1 à 7
+                if( top10.getLocation( ).equals( new Point( 0, 100 ) ) ){
+                    top10.setLocation( -1135, 100 );
+                    droite.setBounds( 2256, 0, 50, 200 );
+                    gauche.setBounds( 1133, 0, 50, 200 );
+                } else {
+                    top10.setLocation( 0, 100 );
+                    droite.setBounds( 1121, 0, 50, 200 );
+                    gauche.setBounds( 0, 0, 50, 200 );
+                }
+                updateUI( );
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                gauche.setBackground( new Color( 0, 0, 0, 150 ) );
+                updateUI( );
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                gauche.setBackground( new Color( 0, 0, 0, 150 ) );
+                updateUI( );
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                gauche.setBackground( new Color( 0, 0, 0, 150 ) );
+                updateUI( );
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                gauche.setBackground( new Color( 0, 0, 0, 150 ) );
+                updateUI( );
+            }
+        } );
+        top10.add( droite );
+        top10.add( gauche );
+        //on affiche les films top 10
+
+        for (int i = 0; i < controleur.getBDD( ).getTop( ).size( ); i++) {
+            try {
+                BufferedImage image = chargerIm(controleur.getBDD().getTop().get(i).getUrlAffiche( ) );
+                controleur.getBDD( ).getTop( ).get( i ).setAffiche( new JButton( resizeImage( image, 120, 170 ) ) );
+                if( i < 5 ){
+                    controleur.getBDD( ).getTop( ).get( i ).getAffiche( ).setBounds( 135 + i * 220, 10, 120, 170 );
+                } else {
+                    controleur.getBDD( ).getTop( ).get( i ).getAffiche( ).setBounds( 135 + i * 225, 10, 120, 170 );
+                }
+                controleur.getBDD( ).getTop( ).get( i ).getAffiche( ).addMouseListener( new MouseListener( ) {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        //aficher le film
+                        for (int i = 0; i < controleur.getBDD( ).getTop( ).size( ); i++) {
+                            if( e.getSource( ) == controleur.getBDD( ).getTop( ).get( i ).getAffiche( ) ){
+                                System.out.println( "film" + controleur.getBDD( ).getTop( ).get( i ).getTitre( ) );
+                                controleur.getBDD( ).getTop( ).get( i ).getAffiche( ).setSelected( false );
+                                try {
+                                    container.remove( desc );
+                                    container.repaint( );
+                                    container.revalidate( );
+                                    container.updateUI( );
+                                    BufferedImage image = chargerIm( controleur.getBDD( ).getTop( ).get( i ).getUrlAffiche( ) );
+                                    controleur.getBDD( ).getTop( ).get( i ).getAffiche( ).setIcon( resizeImage( image, 120, 170 ) );
+                                    if( i < 5 )
+                                        controleur.getBDD( ).getTop( ).get( i ).getAffiche( ).setBounds( 135 + i * 220, 10, 120, 170 );
+                                    else
+                                        controleur.getBDD( ).getTop( ).get( i ).getAffiche( ).setBounds( 135 + i * 225, 10, 120, 170 );
+                                } catch (IOException ex) {
+                                    throw new RuntimeException( ex );
+                                }
+                                //On transmet au controlleur le film et l'action
+                                removeAll( );
+                                controleur.setFilm( controleur.getBDD( ).getTop( ).get( i ) );//on met le film
+                                System.out.println( "Netflix test" );
+                                controleur.setAction( "FilmProprietaire" );//transmission au controlleur
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void mousePressed(MouseEvent e) {
+                        for (int i = 0; i < controleur.getBDD( ).getTop( ).size( ); i++) {
+                            if( e.getSource( ) == controleur.getBDD( ).getTop( ).get( i ).getAffiche( ) ){
+                                controleur.getBDD( ).getTop( ).get( i ).getAffiche( ).setSelected( false );
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void mouseReleased(MouseEvent e) {
+                        for (int i = 0; i < controleur.getBDD( ).getTop( ).size( ); i++) {
+                            if( e.getSource( ) == controleur.getBDD( ).getTop( ).get( i ).getAffiche( ) ){
+                                controleur.getBDD( ).getTop( ).get( i ).getAffiche( ).setSelected( false );
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void mouseEntered(MouseEvent e) {
+                        //lorsqu'on entre sur l'image
+                        for (int i = 0; i < controleur.getBDD( ).getTop( ).size( ); i++) {
+                            if( e.getSource( ) == controleur.getBDD( ).getTop( ).get( i ).getAffiche( ) ){
+                                controleur.getBDD( ).getTop( ).get( i ).getAffiche( ).setSelected( false );
+                                try {
+                                    BufferedImage image = chargerIm( controleur.getBDD( ).getTop( ).get( i ).getUrlAfficheHor( ) );
+                                    controleur.getBDD( ).getTop( ).get( i ).getAffiche( ).setIcon( resizeImage( image, 250, 200 ) );
+                                    if( i < 2 ){
+                                        controleur.getBDD( ).getTop( ).get( i ).getAffiche( ).setBounds( 90 + i * 195, 0, 250, 200 );
+
+                                    } else if( i < 5 ){
+                                        controleur.getBDD( ).getTop( ).get( i ).getAffiche( ).setBounds( 140 + i * 195, 0, 250, 200 );
+
+                                    } else {
+                                        controleur.getBDD( ).getTop( ).get( i ).getAffiche( ).setBounds( 130 + i * 215, 0, 250, 200 );
+                                    }
+                                } catch (IOException ex) {
+                                    throw new RuntimeException( ex );
+                                }
+                                desc = description( controleur.getBDD( ).getTop( ).get( i ), i );
+
+                                if( listeMesfilms.size( ) == 0 )
+                                    container.remove( b2 );
+                                else
+                                    container.remove( b1 );
+                                container.add( desc );
+                                if( listeMesfilms.size( ) == 0 )
+                                    container.add( b2 );
+                                else
+                                    container.add( b1 );
+                                container.repaint( );
+                                container.revalidate( );
+                                container.updateUI( );
+                                top10.add( controleur.getBDD( ).getTop( ).get( i ).getAffiche( ) );
+                            }
+
+                        }
+
+                    }
+
+                    @Override
+                    public void mouseExited(MouseEvent e) {
+                        for (int i = 0; i < controleur.getBDD( ).getTop( ).size( ); i++) {
+                            if( e.getSource( ) == controleur.getBDD( ).getTop( ).get( i ).getAffiche( ) ){
+                                controleur.getBDD( ).getTop( ).get( i ).getAffiche( ).setSelected( false );
+                                try {
+                                    container.remove( desc );
+                                    container.repaint( );
+                                    container.revalidate( );
+                                    container.updateUI( );
+                                    BufferedImage image = chargerIm( controleur.getBDD( ).getTop( ).get( i ).getUrlAffiche( ) );
+                                    controleur.getBDD( ).getTop( ).get( i ).getAffiche( ).setIcon( resizeImage( image, 120, 170 ) );
+                                    if( i < 5 )
+                                        controleur.getBDD( ).getTop( ).get( i ).getAffiche( ).setBounds( 135 + i * 220, 10, 120, 170 );
+                                    else
+                                        controleur.getBDD( ).getTop( ).get( i ).getAffiche( ).setBounds( 135 + i * 225, 10, 120, 170 );
+                                    top10.updateUI( );
+                                } catch (IOException ex) {
+                                    throw new RuntimeException( ex );
+                                }
+                            }
+                        }
+                    }
+                } );
+                top10.add( controleur.getBDD( ).getTop( ).get( i ).getAffiche( ) );
+            } catch (IOException e) {
+                e.printStackTrace( );
+            }
+        }
+        container.add( separateur, BorderLayout.CENTER );
+        container.add( top10, BorderLayout.CENTER );
+        container.add( b5 );
+        container.add( b4 );
+        container.add( b3 );
+        container.add( b2 );
+        if( listeMesfilms.size( ) > 0 )
+            container.add( b1 );
+        //on définie les barres en noir
+        JScrollPane scrollPane = new JScrollPane( container );
+        scrollPane.getVerticalScrollBar( ).setBackground( Color.BLACK );
+        scrollPane.getHorizontalScrollBar( );
+        scrollPane.setBounds( 0, 0, 1190, 713 );
+        scrollPane.getVerticalScrollBar( ).setUI( new BasicScrollBarUI( ) {
+            @Override
+            protected void configureScrollBarColors() {
+                thumbHighlightColor = new Color( 0x8d8d8d );
+                thumbLightShadowColor = new Color( 0x8d8d8d );
+                thumbDarkShadowColor = new Color( 0x8d8d8d );
+                thumbColor = new Color( 20, 20, 20 );
+            }
+        } );
+        scrollPane.setHorizontalScrollBar( null );
+        add( scrollPane, BorderLayout.CENTER );
+        updateUI( );
+        setVisible( true );
+    }
+    public void FilmProprietaire(Film voir, boolean top) {
+        JPanel film = new JPanel( null );
+        JLabel note = new JLabel( "Votre Avis :" );
+        JButton liste = new JButton( "" );
+        JButton MAJ = new JButton( "MAJ" );
+
+        JLabel desc = new JLabel( "Description :" );
+        JLabel act_ = new JLabel( "Acteurs :" );
+        JLabel real_ = new JLabel( "Realisateur :" );
+        JLabel real = new JLabel( voir.getRealisateur( ) );
+        JLabel reco = new JLabel( "Recommandé à " + voir.getPercent( ) + "%" );
+        reco.setFont( new Font( "Arial", Font.BOLD, 15 ) );
+        reco.setForeground( new Color( 0, 153, 0 ) );
+        JTextArea desc_ = new JTextArea( voir.getDescription( ).replaceAll( ";", "," ) );
+        JTextArea title = new JTextArea( voir.getTitre( ) );
+        String temp = "-";//recevoir la liste d'acteurs
+        String genre = "";
+        for (int i = 0; i < voir.getActeurs( ).size( ); i++) {
+            temp += voir.getActeurs( ).get( i );
+            if( i != voir.getActeurs( ).size( ) - 1 )
+                temp += "\n-";
+        }
+        for (int i = 0; i < voir.getGenre( ).size( ); i++) {
+            genre += voir.getGenre( ).get( i );
+            genre += " ";
+        }
+        JLabel info = new JLabel( "Genre : " + genre + " durée : " + voir.getDuree( ) + "  " + voir.getAge( ) + "+ " );
+        System.out.println( info.getText( ) );
+        JTextArea act = new JTextArea( temp );
+        desc_.setForeground( Color.white );
+        act.setForeground( Color.white );
+        note.setForeground( Color.white );
+        note.setFont( new Font( "Arial", Font.BOLD, 18 ) );
+        act_.setFont( new Font( "Arial", Font.BOLD, 25 ) );
+        real_.setFont( new Font( "Arial", Font.BOLD, 25 ) );
+        desc_.setFont( new Font( "Arial", Font.PLAIN, 15 ) );
+        real.setFont( new Font( "Arial", Font.PLAIN, 15 ) );
+        act.setFont( new Font( "Arial", Font.PLAIN, 15 ) );
+        title.setFont( new Font( "Arial", Font.BOLD, 25 ) );
+        info.setFont( new Font( "Arial", Font.PLAIN, 18 ) );
+        title.setForeground( Color.white );
+        act_.setForeground( Color.white );
+        real_.setForeground( Color.white );
+        real.setForeground( Color.white );
+        info.setForeground( Color.white );
+        title.setEditable( false );
+        title.setCursor( null );
+        title.setOpaque( false );
+        title.setFocusable( false );
+        title.setLineWrap( true );
+        title.setWrapStyleWord( true );
+        title.setForeground( Color.white );
+        desc_.setEditable( false );
+        desc_.setCursor( null );
+        desc_.setOpaque( false );
+        desc_.setFocusable( false );
+        desc_.setLineWrap( true );
+        desc_.setWrapStyleWord( true );
+        act.setEditable( false );
+        act.setCursor( null );
+        act.setOpaque( false );
+        act.setFocusable( false );
+        act.setLineWrap( true );
+        act.setWrapStyleWord( true );
+        desc_.setBounds( 800, 165, 370, 500 );
+        if( voir.getDescription( ).length( ) < 300 ){
+            act.setBounds( 800, 325, 370, 500 );
+            act_.setBounds( 800, 275, 370, 50 );
+            real_.setBounds( 800, 325 + voir.getActeurs( ).size( ) * 17, 370, 50 );
+            real.setBounds( 950, 325 + voir.getActeurs( ).size( ) * 17, 370, 50 );
+            info.setBounds( 800, 375 + voir.getActeurs( ).size( ) * 17, 370, 25 );
+        } else if( voir.getDescription( ).length( ) < 450 ){
+            act.setBounds( 800, 370, 370, 500 );
+            act_.setBounds( 800, 325, 370, 50 );
+            real_.setBounds( 800, 370 + voir.getActeurs( ).size( ) * 17, 370, 50 );
+            real.setBounds( 950, 370 + voir.getActeurs( ).size( ) * 17, 370, 50 );
+            info.setBounds( 800, 415 + voir.getActeurs( ).size( ) * 17, 370, 25 );
+        } else {
+            act.setBounds( 800, 390, 370, 500 );
+            act_.setBounds( 800, 345, 370, 50 );
+            real_.setBounds( 800, 390 + voir.getActeurs( ).size( ) * 17, 370, 50 );
+            real.setBounds( 950, 390 + voir.getActeurs( ).size( ) * 17, 370, 50 );
+            info.setBounds( 800, 435 + voir.getActeurs( ).size( ) * 17, 370, 25 );
+        }
+        desc.setFont( new Font( "Arial", Font.BOLD, 25 ) );
+        desc.setForeground( Color.white );
+        desc.setBounds( 800, 115, 400, 60 );
+        liste.setBounds( 80, 580, 160, 20 );
+        MAJ.setBounds( 300, 580, 160, 20 );
+        note.setBounds( 330, 570, 160, 40 );
+        //Pour donner une note au film
+        JCheckBox c1 = new JCheckBox( "", new ImageIcon( "src/images/etoileVide.png" ), false );
+        JCheckBox c2 = new JCheckBox( "", new ImageIcon( "src/images/etoileVide.png" ), false );
+        JCheckBox c3 = new JCheckBox( "", new ImageIcon( "src/images/etoileVide.png" ), false );
+        JCheckBox c4 = new JCheckBox( "", new ImageIcon( "src/images/etoileVide.png" ), false );
+        JCheckBox c5 = new JCheckBox( "", new ImageIcon( "src/images/etoileVide.png" ), false );
+        c1.setSelectedIcon( new ImageIcon( "src/images/etoilePleine.png" ) );
+        c2.setSelectedIcon( new ImageIcon( "src/images/etoilePleine.png" ) );
+        c3.setSelectedIcon( new ImageIcon( "src/images/etoilePleine.png" ) );
+        c4.setSelectedIcon( new ImageIcon( "src/images/etoilePleine.png" ) );
+        c5.setSelectedIcon( new ImageIcon( "src/images/etoilePleine.png" ) );
+        c5.addActionListener( new ActionListener( ) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if( c5.isSelected( ) ){
+                    c4.setSelected( true );
+                    c3.setSelected( true );
+                    c2.setSelected( true );
+                    c1.setSelected( true );
+                } else {
+                    c5.setSelected( false );
+                    c4.setSelected( false );
+                    c3.setSelected( false );
+                    c2.setSelected( false );
+                    c1.setSelected( false );
+                }
+            }
+        } );
+        c4.addActionListener( new ActionListener( ) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if( c4.isSelected( ) && !c5.isSelected( ) ){
+                    c3.setSelected( true );
+                    c2.setSelected( true );
+                    c1.setSelected( true );
+                } else if( c5.isSelected( ) ){
+                    c5.setSelected( false );
+                    c4.setSelected( true );
+                    c3.setSelected( true );
+                    c2.setSelected( true );
+                    c1.setSelected( true );
+                } else {
+                    c5.setSelected( false );
+                    c4.setSelected( false );
+                    c3.setSelected( false );
+                    c2.setSelected( false );
+                    c1.setSelected( false );
+                }
+            }
+        } );
+        c3.addActionListener( new ActionListener( ) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if( c3.isSelected( ) && !c5.isSelected( ) && !c4.isSelected( ) ){
+                    c2.setSelected( true );
+                    c1.setSelected( true );
+                } else if( c4.isSelected( ) || c5.isSelected( ) ){
+                    c5.setSelected( false );
+                    c4.setSelected( false );
+                    c3.setSelected( true );
+                    c2.setSelected( true );
+                    c1.setSelected( true );
+                } else {
+                    c5.setSelected( false );
+                    c4.setSelected( false );
+                    c3.setSelected( false );
+                    c2.setSelected( false );
+                    c1.setSelected( false );
+                }
+            }
+        } );
+        c2.addActionListener( new ActionListener( ) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if( c2.isSelected( ) && !c5.isSelected( ) && !c4.isSelected( ) && !c3.isSelected( ) ){
+                    c1.setSelected( true );
+                } else if( c4.isSelected( ) || c5.isSelected( ) || c3.isSelected( ) ){
+                    c5.setSelected( false );
+                    c4.setSelected( false );
+                    c3.setSelected( false );
+                    c2.setSelected( true );
+                    c1.setSelected( true );
+                } else {
+                    c5.setSelected( false );
+                    c4.setSelected( false );
+                    c3.setSelected( false );
+                    c2.setSelected( false );
+                    c1.setSelected( false );
+                }
+            }
+        } );
+        c1.addActionListener( new ActionListener( ) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if( c1.isSelected( ) && !c5.isSelected( ) && !c4.isSelected( ) && !c3.isSelected( ) && !c2.isSelected( ) ){
+                    c1.setSelected( true );
+                } else if( c4.isSelected( ) || c5.isSelected( ) || c3.isSelected( ) || c2.isSelected( ) ){
+                    c5.setSelected( false );
+                    c4.setSelected( false );
+                    c3.setSelected( false );
+                    c2.setSelected( false );
+                    c1.setSelected( true );
+                } else {
+                    c5.setSelected( false );
+                    c4.setSelected( false );
+                    c3.setSelected( false );
+                    c2.setSelected( false );
+                    c1.setSelected( false );
+                }
+            }
+        } );
+        c1.setBounds( 435, 560, 60, 60 );
+        c2.setBounds( 495, 560, 60, 60 );
+        c3.setBounds( 555, 560, 60, 60 );
+        c4.setBounds( 615, 560, 60, 60 );
+        c5.setBounds( 675, 560, 60, 60 );
+        c1.setBackground( new Color( 20, 20, 20 ) );
+        c2.setBackground( new Color( 20, 20, 20 ) );
+        c3.setBackground( new Color( 20, 20, 20 ) );
+        c4.setBackground( new Color( 20, 20, 20 ) );
+        c5.setBackground( new Color( 20, 20, 20 ) );
+        liste.setBackground( new Color( 1, 113, 121 ) );
+        liste.setForeground( Color.white );
+        liste.setPreferredSize( new Dimension( 250, 35 ) );
+        liste.setFocusPainted( false );
+        MAJ.setBackground( new Color( 1, 113, 121 ) );
+        MAJ.setForeground( Color.white );
+        MAJ.setPreferredSize( new Dimension( 250, 35 ) );
+        MAJ.setFocusPainted( false );
+        title.setBounds( 800, 55, 400, 500 );
+        reco.setBounds( 800, 87, 370, 30 );
+        film.setBackground( new Color( 20, 20, 20 ) );
+        film.setSize( 2050, 1750 );
+        film.setPreferredSize( film.getPreferredSize( ) );
+        //on ouvre une nouvelle video
+        BufferedImage bufimg;
+        JLabel image;
+        try {
+            bufimg = chargerIm( voir.getUrlAfficheHor( ) );
+            ImageIcon img = resizeImage( bufimg, 730, 490 );
+            //   controleur.getControleurCompte( ).ajouterVue( voir.getTitre( ) );
+            image = new JLabel( img );
+        } catch (IOException e) {
+            throw new RuntimeException( e );
+        }
+        if( top ){
+            liste.setText( "Enlever du TOP 10" );
+            liste.addActionListener( new ActionListener( ) {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    try {
+                        DAO.enlevertop10(voir);
+                        //CONTROLEUR
+                        controleur.getBDD().getTop().remove(voir);
+                    } catch (SQLException ex) {
+                        throw new RuntimeException( ex );
+                    }
+                }
+            } );
+        } else {
+            liste.setText( "mettre dans TOP 10" );
+            liste.addActionListener( new ActionListener( ) {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    try {
+                        //BDD
+                        DAO.mettreTop10(voir);
+                        //CONTROLEUR
+                        controleur.getBDD().getTop().add(voir);
+                    } catch (SQLException ex) {
+                        throw new RuntimeException( ex );
+                    }
+                }
+            } );
+        }
+        MAJ.addActionListener( new ActionListener( ) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                controleur.setAction( "MAJ" );
+            }
+        } );
+        image.setBounds( 30, 50, 730, 490 );
+        film.add( image );
+        film.add( MAJ );
+        film.add( title );
+        film.add( liste );
+        film.add( desc );
+        film.add( desc_ );
+        film.add( reco );
+        film.add( act_ );
+        film.add( act );
+        film.add( real_ );
+        film.add( real );
+        film.add( info );
+        film.add( note );
+        film.add( c5 );
+        film.add( c4 );
+        film.add( c3 );
+        film.add( c2 );
+        film.add( c1 );
+        add( film );
+        updateUI( );
+    }
+    public JPanel voirUtilisateur(Compte compte) {
+        container.removeAll();
+        JPanel panel = new JPanel(new GridLayout(1,2));
+        panel.setPreferredSize(new Dimension(1300, 700));
+        panel.setBackground(new Color(0, 0, 0, 150));
+        panel.setLayout(new GridBagLayout());
+        ArrayList<Utilisateur>utilisateurs = new ArrayList<>(  );
+        utilisateurs=controleur.getControleurCompte().getCompte( ).getUtilisateurs( );
+
+        Object[][] donnees = new Object[utilisateurs.size()][2];
+        for(int i =0;i<utilisateurs.size();i++)
+        {
+            Utilisateur utilisateur = utilisateurs.get( i );
+            donnees[i][0]=compte.getEmail();
+            donnees[i][1]=utilisateur.getPseudo();
+            //  donnees[i][2]=utilisateur.getMaListe();
+        }
+
+        String[] titres = {"Email", "Pseudo"};
+
+        DefaultTableModel modele = new DefaultTableModel(donnees, titres) {
+            public boolean isCellEditable(int row, int column) {
+                return true;
+            }
+        };
+
+        // Création d'une instance de JTable avec le modèle de tableau
+        JTable tableau = new JTable(modele);
+        JScrollPane scrollPane = new JScrollPane(tableau);
+        panel.add(scrollPane);
+        scrollPane.setPreferredSize(new Dimension(600, 400));
+        panel.setBounds( 800,600,800,700 );
+        // Ajout du conteneur principal à la fenêtre
+        return panel;
+    }
+    public void clients(){
+        container.setLayout( null );
+        container.removeAll(  );
+        container.setPreferredSize(new Dimension(800, 600));
+        container.setBackground(new Color(0, 0, 0, 150));
+        container.setLayout(new GridBagLayout());
+
+        ArrayList<Compte> comptes = controleur.getAllComptes();
+
+        // Création d'un tableau à deux dimensions pour stocker les données
+        Object[][] donnees = new Object[comptes.size()][6];
+
+        for (int i = 0; i < comptes.size(); i++) {
+            Compte compte = comptes.get(i);
+            donnees[i][0] = compte.getEmail();
+            donnees[i][1] = compte.getMdp();
+            donnees[i][2] = compte.getUsager();
+            try {
+                donnees[i][3] = controleur.NombreUtilisateur(compte);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            // Ajout d'un bouton pour chaque ligne du tableau
+            JButton button = new JButton("Voir");
+
+            button.addActionListener( new ActionListener( ) {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    JPanel panel=voirUtilisateur( compte);
+                    panel.setBounds( 0,0,700,600 );
+                    container.add( panel );
+                    updateUI();
+                }
+            } );
+
+            donnees[i][4] = button;
+        }
+
+        // Création d'un tableau de chaînes pour stocker les titres de colonnes
+        String[] titres = {"Email", "Mot de passe", "Usagers", "Nombre d'utilisateurs", "Voir Utilisateur"};
+
+        // Création d'un modèle de tableau pour désactiver l'édition des cellules
+        DefaultTableModel modele = new DefaultTableModel(donnees, titres) {
+            public boolean isCellEditable(int row, int column) {
+                return true;
+            }
+        };
+
+        // Création d'une instance de JTable avec le modèle de tableau
+        JTable tableau = new JTable(modele);
+
+        // Définition de la largeur des colonnes
+        tableau.getColumnModel().getColumn(0).setPreferredWidth(150);
+        tableau.getColumnModel().getColumn(1).setPreferredWidth(150);
+        tableau.getColumnModel().getColumn(2).setPreferredWidth(100);
+        tableau.getColumnModel().getColumn(3).setPreferredWidth(180);
+        tableau.getColumnModel().getColumn(4).setPreferredWidth(150);
+
+
+        // Ajout d'un rendu pour la dernière colonne (les boutons)
+        tableau.getColumnModel().getColumn(4).setCellRenderer(new TableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                return (Component) value;
+            }
+        });
+
+        // Ajout d'un éditeur pour la dernière colonne (les boutons)
+        tableau.getColumnModel().getColumn(4).setCellEditor(new DefaultCellEditor(new JCheckBox()) {
+
+            @Override
+            public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+                return (Component) value;
+            }
+        });
+
+        // Ajout du JScrollPane contenant le tableau
+        JScrollPane scrollPane = new JScrollPane(tableau);
+        container.add(scrollPane);
+
+        scrollPane.setPreferredSize(new Dimension(600, 400));
+        container.setBounds( 0,0,1300,700 );
+        // Ajout du conteneur principal à la fenêtre
+        add(container);
+    }
+    public void MAJFILM(Film voir) {
+        container.removeAll();
+        container.setPreferredSize( new Dimension( 450, 500 ));
+        container.setBackground( new Color( 10, 120, 0, 150 ));
+        container.setLayout( new GridBagLayout( ) );
+
+        JLabel ident = new JLabel( "Renseigner" );
+        ident.setFont( new Font( "Arial", Font.BOLD, 20 ) );
+        JButton bconfirm = new JButton( "Valider" );
+        JButton bretour = new JButton( "Retour" );
+        final JTextField TextRealisateur = new JTextField( "Realisateur" );
+        JPasswordField TextTitre = new JPasswordField( "Titre" );
+        TextTitre.setEchoChar( (char) 0 );
+        JTextField TextUrl = new JTextField("Lien Trailer");
+        JTextField Genre = new JTextField("Genre");
+        TextRealisateur.addMouseListener( new MouseAdapter(){
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                //On efface le texte original
+                if( TextRealisateur.isEditable( ) ){
+                    JTextField txt = (JTextField) e.getSource( );
+                    txt.setText( "" );
+                    txt.setForeground( Color.white );
+                }
+            }
+            @Override
+            public void mouseExited(MouseEvent e) {
+                if( TextRealisateur.getText( ).length( ) == 0 ){
+                    TextRealisateur.setText( voir.getRealisateur( ) );
+                }
+            }
+        } );
+        TextUrl.addMouseListener( new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if( TextUrl.isEditable( ) ){
+                    JTextField TextMDP = (JTextField) e.getSource( );
+                    TextMDP.setText( "" );
+                    TextMDP.setForeground( Color.white );
+                }
+            }
+            @Override
+            public void mouseExited(MouseEvent e) {
+                if( TextUrl.getText( ).length( ) == 0 ){
+                    TextUrl.setText( voir.getUrlfilm( ) );
+                }
+            }
+        } );
+        Genre.addMouseListener( new MouseAdapter( ) {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (Genre.isEditable()) {
+                    JTextField TextMDP = (JTextField) e.getSource();
+                    TextMDP.setText("");
+                    TextMDP.setForeground(Color.white);
+                }
+            }
+            @Override
+            public void mouseExited(MouseEvent e) {
+                if( Genre.getText( ).length( ) == 0 ){
+                    Genre.setText( voir.getGenre( ).get(0) );
+                }
+            }
+        } );
+
+        TextTitre.addMouseListener( new MouseListener( ) {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                //On efface le texte original
+                if( TextTitre.isEditable( ) ){
+                    JTextField TextMDP = (JTextField) e.getSource( );
+                    TextMDP.setText( "" );
+                    TextMDP.setForeground( Color.white );
+                }
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                if( TextTitre.getText( ).length( ) == 0 ){
+                    TextTitre.setText( voir.getTitre( ) );
+                }
+            }
+        } );
+
+
+        bconfirm.getModel( ).addChangeListener( new ChangeListener( ) {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                ButtonModel model = bconfirm.getModel( );
+                //on appuie sur le bouton
+                if( model.isArmed( ) ){
+
+                    try {
+                        DAO.changerinfofilm( TextRealisateur.getText( ), TextTitre.getText( ), voir.getTitre( ),TextUrl.getText(),Genre.getText() );
+                    } catch (SQLException ex) {
+                        throw new RuntimeException( ex );
+                    }
+                    updateUI( );
+                }
+            }
+        } );
+        bretour.getModel( ).addChangeListener( new ChangeListener( ) {
+            //bouton retour
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                ButtonModel model = bretour.getModel( );
+                //on appuie sur le bouton
+                if( model.isArmed( ) ){
+                    controleur.setAction( "Netflix Proprietaire" );
+                }
+            }
+        } );
+        //Couleur des textes
+        ident.setForeground( Color.white );
+
+        //Bouton
+        bconfirm.setBackground( new Color( 1, 113, 121 ) );
+        bconfirm.setForeground( Color.white );
+        bconfirm.setPreferredSize( new Dimension( 250, 35 ) );
+        bconfirm.setFocusPainted( false );
+        bretour.setBackground( new Color( 1, 113, 121 ) );
+        bretour.setForeground( Color.white );
+        bretour.setPreferredSize( new Dimension( 150, 35 ) );
+        bretour.setFocusPainted( false );
+        //taille textfield
+        TextRealisateur.setPreferredSize( new Dimension( 250, 35 ) );
+        TextTitre.setPreferredSize( new Dimension( 250, 35 ) );
+        Genre.setPreferredSize( new Dimension( 250,35 ) );
+        TextUrl.setPreferredSize( new Dimension( 250,35 ) );
+        //couleur textField
+        TextRealisateur.setForeground( Color.white );
+        TextTitre.setForeground( Color.white );
+        TextRealisateur.setBackground( Color.DARK_GRAY );
+        TextTitre.setBackground( Color.DARK_GRAY );
+        Genre.setForeground( Color.white );
+        TextUrl.setBackground( Color.DARK_GRAY );
+        Genre.setBackground( Color.DARK_GRAY );
+        TextUrl.setBackground( Color.WHITE);
+
+        //Inset
+        Insets textInsets = new Insets( 10, 10, 5, 10 );
+        Insets buttonInsets = new Insets( 20, 10, 10, 10 );
+
+
+        //positionnement S'identifier
+        GridBagConstraints input = new GridBagConstraints( );
+        input.anchor = GridBagConstraints.CENTER;
+        input.insets = textInsets;
+        input.gridy = 0;
+        container.add( ident, input );
+        //positionnement textEmail
+        input.anchor = GridBagConstraints.CENTER;
+        input.insets = textInsets;
+        input.gridy = 1;
+        container.add( TextRealisateur, input );
+        //positionnement text mauvais email
+        input.anchor = GridBagConstraints.CENTER;
+        input.insets = textInsets;
+        input.gridy = 2;
+        container.add(TextUrl,input);
+
+        //positionnement textMDP
+        input.gridy = 3;
+        input.insets = textInsets;
+        input.anchor = GridBagConstraints.CENTER;
+        container.add( TextTitre, input );
+        //positionnement text mauvais mdp
+        input.anchor = GridBagConstraints.CENTER;
+        input.insets = textInsets;
+        input.gridy = 5;
+        container.add(Genre,input);
+
+        //placement bouton
+        input.insets = buttonInsets;
+        input.anchor = GridBagConstraints.WEST;
+        input.gridx = 0;
+        input.gridy = 6;
+        container.add( bconfirm, input );
+        //bouton retour
+        input.insets = buttonInsets;
+        input.anchor = GridBagConstraints.CENTER;
+        input.gridx = 0;
+        input.gridy = 8;
+        container.add( bretour, input );
+        //pour placer le panel transparent (container) sur notre panel avec image en fond
+        input.anchor = GridBagConstraints.CENTER;
+        input.gridx = 2;
+        input.gridy = 5;
+        container.setBounds( 0, 0, 1200, 700 );
+        add( container );
+        updateUI( );
     }
     public void setController(FenetreControleur fn){
         this.controleur=fn;

@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
+//Controleur du compte
 public class ControleurCompte {
     private ViewFenetre fenetre;//Vue
     private  ViewContenu panel;
@@ -122,7 +123,6 @@ public class ControleurCompte {
     }
     public void RecuperUtilisateurs() throws SQLException {
         ArrayList<String>liste=DAO.RecupererUtilisateurs(compte.getEmail());
-        System.out.println(liste);
         ArrayList<Utilisateur> a = new ArrayList<Utilisateur>() ;
         String mail;
         String pe = null;

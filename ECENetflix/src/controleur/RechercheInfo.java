@@ -1,9 +1,11 @@
 package controleur;
 import modele.Film;
+import modele.Compte;
 import modele.NetflixBDD;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+//Recherche info dans bDD
 public class RechercheInfo {
     private ConnexionDB maconnexion;
     private final java.awt.List listeDeTables;
@@ -175,7 +177,6 @@ public class RechercheInfo {
         String reqMDP ="SELECT * FROM film;";
         liste = maconnexion.remplirChampsRequete(reqMDP);
         for(int a=0;a<liste.size();a++){
-            System.out.println(liste.get(a));
             rep = liste.get(a).split(",");
             for(int i=0;i<rep.length;i++){
                 Film nv =  new Film();
@@ -220,7 +221,6 @@ public class RechercheInfo {
         BDDFilm.setAnime(_anime);
         return BDDFilm;
     }
-
     public void NouveauCompte(String mail,String mdp,String utilisateur) throws SQLException {
         String requete = "INSERT INTO compte (email, mdp, usager) VALUES ('"+mail+"','"+mdp+"','"+utilisateur+"');";
         maconnexion.executeUpdate(requete);
@@ -263,4 +263,44 @@ public class RechercheInfo {
     public void AjoutMaliste(String mail,String pseudo,String film) throws SQLException {
         maconnexion.executeUpdate("INSERT INTO maliste(mail,pseudo,film_titre) VALUES ('"+mail+"','"+pseudo+"','"+film+"');" );
     }
+    public ArrayList<String> RecupererNote(String email,String pseudo) throws SQLException {
+        String requete = "SELECT * FROM note WHERE mail='"+email+"'AND pseudo='"+pseudo+"';";
+        ArrayList<String>liste=new ArrayList<>();
+        liste=maconnexion.recupererDonnees(requete);
+        System.out.println(liste);
+        return liste;
+    }
+    //NOTE RECHER
+    public void supprimerNote(String mail,String pseudo,String film)throws SQLException{
+        maconnexion.executeUpdate("DELETE FROM note where pseudo='"+pseudo+"'and mail='"+mail+"'and film ='"+film+"';");
+    }
+    public void AjoutNote(String mail,String pseudo,String film,int note) throws SQLException {
+        maconnexion.executeUpdate("INSERT INTO note(mail,pseudo,film,note) VALUES ('"+mail+"','"+pseudo+"','"+film+"','"+note+"');");
+    }
+    public void ModifNote(String mail,String pseudo,String film,int note) throws SQLException {
+        maconnexion.executeUpdate("UPDATE note SET note='"+note+"' WHERE mail='"+mail+"'and pseudo ='"+pseudo+"'and film='"+film+"';");
+    }
+    //TOP 10
+    public void mettreTop10(Film voir) throws SQLException {
+        maconnexion.executeUpdate( "UPDATE film SET liste_type='top10' WHERE titre='"+voir.getTitre()+"';" );
+    }
+    public void enlevertop10(Film voir) throws SQLException {
+        maconnexion.executeUpdate( "UPDATE film SET liste_type='' WHERE titre='"+voir.getTitre()+"';" );
+    }
+    public String nombreUtilisateur(Compte compte) throws SQLException {
+        ArrayList<String> resultats = maconnexion.recupererDonnees("SELECT COUNT(*) AS nb_utilisateur FROM utilisateur WHERE mail = '"+compte.getEmail()+"';");
+        return resultats.get(0);
+    }
+    public ArrayList<String> recupererComptes() throws SQLException {
+        ArrayList<String>a =maconnexion.recupererDonnees( "SELECT * FROM compte");
+        return a;
+    }
+    public void changerinfofilm(String realisateur,String Titre,String VraiTitre,String Url,String Genre) throws SQLException {
+        maconnexion.executeUpdate( "UPDATE film set titre='"+Titre+"', realisateur='"+realisateur+"',urlfilm='"+Url+"',genre='"+Genre+"', Where titre ='"+VraiTitre+"';" );
+    }
+    public String recupCompte(String email,String mdp) throws SQLException {
+        ArrayList<String> resultats = maconnexion.recupererDonnees( "SELECT usager FROM compte WHERE email='"+email+"'and mdp='"+mdp+"';");
+        return resultats.get(0);
+    }
+
 }

@@ -12,5 +12,6 @@
     <orderEntry type="library" scope="RUNTIME" name="OpenJFK11" level="application" />
     <orderEntry type="library" name="vlcj-3.0" level="application" />
     <orderEntry type="library" name="VideoLAN" level="application" />
+    <orderEntry type="library" name="jcommon-1.0.23" level="project" />
   </component>
 </module>

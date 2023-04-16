@@ -15,6 +15,7 @@ public class Film {
     String Description;
     JButton affiche;
     String duree;//format heure H min
+    int note;
     int percent;
     int age;
     public Film(){
@@ -29,6 +30,7 @@ public class Film {
         this.affiche = new JButton();
         this.duree = "0h00";
         this.percent = 50 + (int)(Math.random() * ((100 - 50) + 1));
+        this.note = -1;
         int test = (int) (Math.random() * 3);
         if(test==0){
             age = 10;
@@ -76,6 +78,8 @@ public class Film {
     public String getDuree(){return duree;}
     public int getPercent(){return percent;}
     public int getAge(){return age;}
+    public int getNote(){return note;}
+    public void setNote(int _note){this.note=_note;}
     public void afficherFilm(){
         System.out.println("Titre : "+Titre);
         System.out.println("Real : "+Realisateur);
